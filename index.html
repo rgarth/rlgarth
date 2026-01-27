@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R. L. Garth | Children's Author</title>
+    <meta name="description" content="R. L. Garth - Children's author of whimsical tales filled with magic and wonder.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-cream: #faf6f1;
+            --color-parchment: #f5efe6;
+            --color-forest: #2d4a3e;
+            --color-forest-light: #4a7c6f;
+            --color-burgundy: #6b3a3a;
+            --color-gold: #b8956b;
+            --color-text: #3d3d3d;
+            --color-text-light: #666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lora', Georgia, serif;
+            background-color: var(--color-cream);
+            color: var(--color-text);
+            line-height: 1.7;
+            font-size: 17px;
+        }
+
+        /* Decorative border frame */
+        .page-frame {
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .inner-frame {
+            max-width: 750px;
+            margin: 0 auto;
+            background: var(--color-parchment);
+            border: 1px solid var(--color-gold);
+            padding: 70px 60px;
+            position: relative;
+        }
+
+        /* Corner vine decorations */
+        .vine-corner {
+            position: absolute;
+            width: 120px;
+            height: 100px;
+            background-image: url('assets/img/vine-corner.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.8;
+        }
+
+        .vine-corner-tl {
+            top: 5px;
+            left: 5px;
+            transform: scaleY(-1);
+        }
+
+        .vine-corner-tr {
+            top: 5px;
+            right: 5px;
+            transform: scale(-1, -1);
+        }
+
+        .vine-corner-bl {
+            bottom: 5px;
+            left: 5px;
+        }
+
+        .vine-corner-br {
+            bottom: 5px;
+            right: 5px;
+            transform: scaleX(-1);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .author-image {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--color-gold);
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--color-forest);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--color-gold);
+            letter-spacing: 2px;
+        }
+
+        /* Decorative vine divider */
+        .divider {
+            margin: 40px 0;
+            height: 50px;
+            background-image: url('assets/img/vine-divider.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--color-forest);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .lead {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--color-text-light);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Links */
+        a {
+            color: var(--color-forest);
+            text-decoration: none;
+            border-bottom: 1px solid var(--color-gold);
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        a:hover {
+            color: var(--color-burgundy);
+            border-color: var(--color-burgundy);
+        }
+
+        /* Books Section */
+        .books-section {
+            margin-bottom: 40px;
+        }
+
+        .books-grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .book-card {
+            padding: 30px;
+            border: 1px solid;
+            position: relative;
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: -8px;
+            bottom: -8px;
+            border: 1px solid;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Penelope Lemon - warm, light */
+        .book-penelope {
+            background: linear-gradient(135deg, #fefdfb 0%, #fdf8f0 100%);
+            border-color: #d4a574;
+        }
+
+        .book-penelope::before {
+            border-color: #d4a574;
+            background: #fef9f3;
+        }
+
+        .book-penelope .book-title {
+            color: #5a7c47;
+        }
+
+        .book-penelope .book-age {
+            background: #5a7c47;
+        }
+
+        /* Boneaters - darker, unsettling */
+        .book-boneaters {
+            background: linear-gradient(135deg, #f7f5f3 0%, #ebe6e0 100%);
+            border-color: #4a4a4a;
+        }
+
+        .book-boneaters::before {
+            border-color: #4a4a4a;
+            background: #e8e4de;
+        }
+
+        .book-boneaters .book-title {
+            color: #2d2d2d;
+        }
+
+        .book-boneaters .book-age {
+            background: #4a4a4a;
+        }
+
+        .book-label {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--color-gold);
+            margin-bottom: 8px;
+        }
+
+        .book-title {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .book-age {
+            display: inline-block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: white;
+            padding: 4px 12px;
+            margin-bottom: 15px;
+        }
+
+        .book-description {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        .book-tagline {
+            font-style: italic;
+            color: var(--color-text-light);
+            margin-top: 12px;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        /* Contact section */
+        .contact-list {
+            list-style: none;
+            text-align: center;
+        }
+
+        .contact-list li {
+            margin-bottom: 12px;
+        }
+
+        .contact-list a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: none;
+        }
+
+        .contact-list a:hover {
+            color: var(--color-burgundy);
+        }
+
+        .contact-list svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--color-gold);
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid var(--color-gold);
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .page-frame {
+                padding: 15px;
+            }
+
+            .inner-frame {
+                padding: 50px 25px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+                letter-spacing: 2px;
+            }
+
+            .author-image {
+                width: 130px;
+                height: 130px;
+            }
+
+            .divider {
+                height: 35px;
+                margin: 30px 0;
+            }
+
+            .vine-corner {
+                width: 80px;
+                height: 65px;
+            }
+
+            p {
+                text-align: left;
+            }
+
+            .book-card {
+                padding: 20px;
+            }
+
+            .book-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-frame">
+        <div class="inner-frame">
+            <!-- Corner vine decorations -->
+            <div class="vine-corner vine-corner-tl"></div>
+            <div class="vine-corner vine-corner-tr"></div>
+            <div class="vine-corner vine-corner-bl"></div>
+            <div class="vine-corner vine-corner-br"></div>
+
+            <header>
+                <img src="assets/img/me.png" alt="R. L. Garth" class="author-image">
+                <h1>R. L. Garth</h1>
+                <p class="subtitle" style="text-align: center;">Author of Children's Tales</p>
+            </header>
+
+            <p class="lead">
+                Stories of magic, wonder, and the quiet adventures<br>
+                that live in every child's imagination.
+            </p>
+
+            <div class="divider"></div>
+
+            <section class="books-section">
+                <h2>Coming Soon</h2>
+                <div class="books-grid">
+                    
+                    <article class="book-card book-penelope">
+                        <p class="book-label">Coming Soon</p>
+                        <h3 class="book-title">The Extraordinary Penelope Lemon</h3>
+                        <span class="book-age">Middle Grade</span>
+                        <p class="book-description">
+                            Ten-year-old Penelope Lemon discovers that the overgrown corner 
+                            of her backyard is home to something impossible—fairies. Real ones. 
+                            And they're at war. Now Penelope must navigate ancient grudges, 
+                            tiny politics, and her own doubts to bring peace to her garden.
+                        </p>
+                        <p class="book-tagline">
+                            A story about seeing the magic that was always there.
+                        </p>
+                    </article>
+
+                    <article class="book-card book-boneaters">
+                        <p class="book-label">Coming Soon</p>
+                        <h3 class="book-title">Boneaters</h3>
+                        <span class="book-age">Young Adult</span>
+                        <p class="book-description">
+                            You were told tooth fairies leave coins under pillows. You weren't 
+                            told what they really are. For centuries, an ancient curse kept the 
+                            Boneaters bound—tiny unseelie fae who could only consume teeth that 
+                            fell on their own. Now the curse is broken, and they hunger for more. 
+                            When the Boneaters take his sister, Fergus will do whatever it takes 
+                            to get her back.
+                        </p>
+                        <p class="book-tagline">
+                            A dark fantasy about the true origin of tooth fairies.
+                        </p>
+                    </article>
+
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <section>
+                <h2>About the Author</h2>
+                <p>
+                    R. L. Garth started telling stories to his children—once they 
+                    outgrew them, he decided to write some of them down. Creating 
+                    on Dharug Country.
+                </p>
+            </section>
+
+            <div class="divider"></div>
+
+            <section>
+                <h2>Get in Touch</h2>
+                <ul class="contact-list">
+                    <li>
+                        <a href="https://www.instagram.com/rlgarth/" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            Follow on Instagram
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.redbubble.com/people/creepingcards/shop" target="_blank" rel="noopener">
+                            <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4zm-2.4 4.8v9.6h2.4v-3.6h1.2c1.988 0 3.6-1.612 3.6-3.6s-1.612-3.6-3.6-3.6h-3.6zm2.4 2.4h1.2c.663 0 1.2.537 1.2 1.2s-.537 1.2-1.2 1.2H12V9.6z"/></svg>
+                            Greeting Cards on Redbubble
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mailto:author@rlgarth.com">
+                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                            author@rlgarth.com
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+            <footer>
+                <p>© 2025 R. L. Garth</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
