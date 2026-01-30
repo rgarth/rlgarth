@@ -11,466 +11,927 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --color-cream: #faf6f1;
-            --color-parchment: #f5efe6;
-            --color-forest: #2d4a3e;
-            --color-forest-light: #4a7c6f;
-            --color-burgundy: #6b3a3a;
-            --color-gold: #b8956b;
-            --color-text: #3d3d3d;
-            --color-text-light: #666;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Lora', Georgia, serif;
-            background-color: var(--color-cream);
-            color: var(--color-text);
             line-height: 1.7;
             font-size: 17px;
+            overflow-x: hidden;
+            background: #f8f4ef;
         }
 
-        /* Decorative border frame */
-        .page-frame {
-            min-height: 100vh;
-            padding: 30px;
-        }
-
-        .inner-frame {
-            max-width: 750px;
-            margin: 0 auto;
-            background: var(--color-parchment);
-            border: 1px solid var(--color-gold);
-            padding: 70px 60px;
+        /* The scroll container */
+        .scroll-journey {
             position: relative;
+            height: 480vh;
         }
 
-        /* Corner vine decorations */
-        .vine-corner {
+        /* Fixed viewport for the 3D effect */
+        .viewport {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sky/background gradient */
+        .sky {
             position: absolute;
-            width: 120px;
-            height: 100px;
-            background-image: url('assets/img/vine-corner.svg');
-            background-size: contain;
-            background-repeat: no-repeat;
-            opacity: 0.8;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #e8f4f8 0%, #f8f4ef 50%, #f0ebe0 100%);
+            transition: background 0.5s ease;
+            z-index: 0;
         }
 
-        .vine-corner-tl {
-            top: 5px;
-            left: 5px;
-            transform: scaleY(-1);
+        /* Foliage elements */
+        .foliage-item {
+            position: absolute;
+            pointer-events: none;
+            transition: transform 0.1s ease-out, opacity 0.3s ease;
+            will-change: transform, opacity;
         }
 
-        .vine-corner-tr {
-            top: 5px;
-            right: 5px;
-            transform: scale(-1, -1);
+        .foliage-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
-        .vine-corner-bl {
-            bottom: 5px;
-            left: 5px;
+        /* Content sections */
+        .content-section {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            z-index: 50;
+            pointer-events: none;
         }
 
-        .vine-corner-br {
-            bottom: 5px;
-            right: 5px;
-            transform: scaleX(-1);
+        .content-section.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
         }
 
-        /* Header */
-        header {
-            text-align: center;
-            margin-bottom: 50px;
+        .content-card {
+            max-width: 600px;
+            width: 100%;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            backdrop-filter: blur(15px);
         }
 
-        .author-image {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--color-gold);
-            margin-bottom: 25px;
+        .content-card-dark {
+            background: rgba(13, 13, 20, 0.92);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
 
+        /* Typography */
         h1 {
             font-family: 'Cormorant Garamond', Garamond, serif;
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 600;
-            color: var(--color-forest);
-            letter-spacing: 3px;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            font-family: 'Cormorant Garamond', Garamond, serif;
-            font-size: 1.2rem;
-            font-style: italic;
-            color: var(--color-gold);
+            color: #2d4a3e;
             letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-align: center;
         }
 
-        /* Decorative vine divider */
-        .divider {
-            margin: 40px 0;
-            height: 50px;
-            background-image: url('assets/img/vine-divider.svg');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.7;
-        }
-
-        /* Sections */
-        section {
-            margin-bottom: 40px;
+        .content-card-dark h1 {
+            color: #c9b8d4;
         }
 
         h2 {
             font-family: 'Cormorant Garamond', Garamond, serif;
             font-size: 1.6rem;
             font-weight: 600;
-            color: var(--color-forest);
-            margin-bottom: 15px;
-            letter-spacing: 1px;
+            color: #2d4a3e;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        p {
-            margin-bottom: 1em;
-            text-align: justify;
-            hyphens: auto;
+        .content-card-dark h2 {
+            color: #c9b8d4;
+        }
+
+        .subtitle {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #b8956b;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 25px;
         }
 
         .lead {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-style: italic;
-            color: var(--color-text-light);
+            color: #666;
             text-align: center;
-            margin-bottom: 30px;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-            hyphens: none;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+
+        .content-card-dark .lead {
+            color: #999;
+        }
+
+        p {
+            color: #3d3d3d;
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+
+        .content-card-dark p {
+            color: #c0c0c0;
+        }
+
+        /* Author image */
+        .author-image {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #b8956b;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        /* Book cards */
+        .book-card {
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 6px;
+            border: 1px solid;
+        }
+
+        .book-penelope {
+            background: linear-gradient(135deg, #fefdfb 0%, #f0f8e8 100%);
+            border-color: #a8c896;
+        }
+
+        .book-bone-eaters {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-color: #4a2c4a;
+        }
+
+        .book-label {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #b8956b;
+            margin-bottom: 6px;
+        }
+
+        .book-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .book-penelope .book-title { color: #4a7c47; }
+        .book-bone-eaters .book-title { color: #c9b8d4; }
+
+        .book-age {
+            display: inline-block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: white;
+            padding: 3px 10px;
+            margin-bottom: 12px;
+            border-radius: 3px;
+        }
+
+        .book-penelope .book-age { background: #5a7c47; }
+        .book-bone-eaters .book-age { background: #4a2c4a; }
+
+        .book-description {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .book-bone-eaters .book-description { color: #b0b0b0; }
+
+        .book-tagline {
+            font-style: italic;
+            color: #888;
+            font-size: 0.85rem;
+            text-align: left;
+            margin-bottom: 0;
         }
 
         /* Links */
         a {
-            color: var(--color-forest);
+            color: #2d4a3e;
             text-decoration: none;
-            border-bottom: 1px solid var(--color-gold);
-            transition: color 0.2s, border-color 0.2s;
+            border-bottom: 1px solid #b8956b;
         }
 
         a:hover {
-            color: var(--color-burgundy);
-            border-color: var(--color-burgundy);
+            color: #6b3a3a;
         }
 
-        /* Books Section */
-        .books-section {
-            margin-bottom: 40px;
+        .content-card-dark a {
+            color: #c9b8d4;
+            border-color: #4a2c4a;
         }
 
-        .books-grid {
-            display: grid;
-            gap: 30px;
-        }
-
-        .book-card {
-            padding: 30px;
-            border: 1px solid;
-            position: relative;
-        }
-
-        .book-card::before {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            right: -8px;
-            bottom: -8px;
-            border: 1px solid;
-            z-index: -1;
-            opacity: 0.3;
-        }
-
-        /* Penelope Lemon - warm, light */
-        .book-penelope {
-            background: linear-gradient(135deg, #fefdfb 0%, #fdf8f0 100%);
-            border-color: #d4a574;
-        }
-
-        .book-penelope::before {
-            border-color: #d4a574;
-            background: #fef9f3;
-        }
-
-        .book-penelope .book-title {
-            color: #5a7c47;
-        }
-
-        .book-penelope .book-age {
-            background: #5a7c47;
-        }
-
-        /* Bone Eaters - darker, unsettling */
-        .book-bone-eaters {
-            background: linear-gradient(135deg, #f7f5f3 0%, #ebe6e0 100%);
-            border-color: #4a4a4a;
-        }
-
-        .book-bone-eaters::before {
-            border-color: #4a4a4a;
-            background: #e8e4de;
-        }
-
-        .book-bone-eaters .book-title {
-            color: #2d2d2d;
-        }
-
-        .book-bone-eaters .book-age {
-            background: #4a4a4a;
-        }
-
-        .book-label {
-            font-family: 'Cormorant Garamond', Garamond, serif;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--color-gold);
-            margin-bottom: 8px;
-        }
-
-        .book-title {
-            font-family: 'Cormorant Garamond', Garamond, serif;
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-
-        .book-age {
-            display: inline-block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: white;
-            padding: 4px 12px;
-            margin-bottom: 15px;
-        }
-
-        .book-description {
-            font-size: 0.95rem;
-            line-height: 1.7;
-            margin-bottom: 0;
-            text-align: justify;
-        }
-
-        .book-tagline {
-            font-style: italic;
-            color: var(--color-text-light);
-            margin-top: 12px;
-            font-size: 0.9rem;
-            text-align: left;
-        }
-
-        /* Contact section */
+        /* Contact */
         .contact-list {
             list-style: none;
             text-align: center;
         }
 
         .contact-list li {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .contact-list a {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 0;
+            gap: 8px;
             border-bottom: none;
-        }
-
-        .contact-list a:hover {
-            color: var(--color-burgundy);
+            font-size: 0.95rem;
         }
 
         .contact-list svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--color-gold);
-            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            fill: #b8956b;
         }
 
-        /* Footer */
         footer {
             text-align: center;
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid var(--color-gold);
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .content-card-dark footer {
+            border-color: #333;
         }
 
         footer p {
-            font-size: 0.85rem;
-            color: var(--color-text-light);
+            font-size: 0.8rem;
+            color: #999;
             text-align: center;
             font-style: italic;
         }
 
+        /* Entry screen */
+        .entry-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 150;
+            background: #f8f4ef;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .entry-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-30px);
+        }
+
+        .entry-text {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #666;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        /* Hand-drawn arrow */
+        .hand-arrow {
+            width: 60px;
+            height: 80px;
+            animation: bobble 2s ease-in-out infinite;
+        }
+
+        .hand-arrow path {
+            fill: none;
+            stroke: #b8956b;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @keyframes bobble {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(15px); }
+        }
+
+        /* Scroll hint (for later sections) */
+        .scroll-hint {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+            animation: float 2.5s ease-in-out infinite;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+        }
+
+        .scroll-hint.visible {
+            opacity: 1;
+        }
+
+        .scroll-hint span {
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .scroll-hint svg {
+            width: 26px;
+            height: 26px;
+            fill: #b8956b;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-12px); }
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 180;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(248, 244, 239, 0.9);
+            backdrop-filter: blur(10px);
+            transition: background 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+        }
+
+        .nav-bar.visible {
+            opacity: 1;
+        }
+
+        .nav-bar.dark {
+            background: rgba(20, 20, 30, 0.9);
+        }
+
+        .nav-link {
+            font-family: 'Cormorant Garamond', Garamond, serif;
+            font-size: 0.85rem;
+            color: #2d4a3e;
+            text-decoration: none;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            transition: background 0.2s ease, color 0.2s ease;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background: rgba(45, 74, 62, 0.1);
+        }
+
+        .nav-bar.dark .nav-link {
+            color: #c9b8d4;
+        }
+
+        .nav-bar.dark .nav-link:hover {
+            background: rgba(201, 184, 212, 0.1);
+        }
+
+        .nav-separator {
+            color: #ccc;
+            align-self: center;
+        }
+
+        .nav-bar.dark .nav-separator {
+            color: #444;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #b8956b, #4a7c6f);
+            z-index: 200;
+            width: 0%;
+        }
+
         /* Responsive */
-        @media (max-width: 700px) {
-            .page-frame {
-                padding: 15px;
+        @media (max-width: 600px) {
+            .content-card {
+                padding: 30px 20px;
             }
-
-            .inner-frame {
-                padding: 50px 25px;
-            }
-
-            h1 {
-                font-size: 2.2rem;
-                letter-spacing: 2px;
-            }
-
-            .author-image {
-                width: 130px;
-                height: 130px;
-            }
-
-            .divider {
-                height: 35px;
-                margin: 30px 0;
-            }
-
-            .vine-corner {
-                width: 80px;
-                height: 65px;
-            }
-
-            p {
-                text-align: left;
-            }
-
-            .book-card {
-                padding: 20px;
-            }
-
-            .book-title {
-                font-size: 1.5rem;
-            }
-
+            h1 { font-size: 2rem; }
+            .author-image { width: 110px; height: 110px; }
+            .book-card { padding: 18px; }
+            .book-title { font-size: 1.3rem; }
+            .foliage-item { transform: scale(0.6) !important; }
         }
     </style>
 </head>
 <body>
-    <div class="page-frame">
-        <div class="inner-frame">
-            <!-- Corner vine decorations -->
-            <div class="vine-corner vine-corner-tl"></div>
-            <div class="vine-corner vine-corner-tr"></div>
-            <div class="vine-corner vine-corner-bl"></div>
-            <div class="vine-corner vine-corner-br"></div>
+    <div class="progress-bar" id="progress"></div>
 
-            <header>
-                <img src="assets/img/me.png" alt="R. L. Garth" class="author-image">
-                <h1>R. L. Garth</h1>
-                <p class="subtitle" style="text-align: center;">Author of Children's Tales</p>
-            </header>
+    <!-- Navigation -->
+    <nav class="nav-bar" id="navBar">
+        <a class="nav-link" data-section="0">Home</a>
+        <span class="nav-separator">|</span>
+        <a class="nav-link" data-section="1">Penelope Lemon</a>
+        <span class="nav-separator">|</span>
+        <a class="nav-link" data-section="2">Bone Eaters</a>
+        <span class="nav-separator">|</span>
+        <a class="nav-link" data-section="3">About</a>
+    </nav>
 
-            <p class="lead">
-                Stories of magic, wonder, and the quiet adventures that live in every child's imagination.
-            </p>
+    <!-- Entry screen with hand-drawn arrow -->
+    <div class="entry-screen" id="entryScreen">
+        <p class="entry-text">scroll to enter</p>
+        <svg class="hand-arrow" viewBox="0 0 60 80">
+            <!-- Hand-drawn wobbly arrow -->
+            <path d="M30 5 Q28 8 31 15 Q29 22 30 30 Q32 38 29 45 Q31 52 30 60"/>
+            <path d="M15 45 Q20 52 25 55 Q28 58 30 62 Q32 58 35 55 Q40 52 45 45"/>
+        </svg>
+    </div>
 
-            <div class="divider"></div>
+    <div class="scroll-hint" id="scrollHint">
+        <span>keep exploring</span>
+        <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+    </div>
 
-            <section class="books-section">
-                <h2>Coming Soon</h2>
-                <div class="books-grid">
-                    
-                    <article class="book-card book-penelope">
-                        <p class="book-label">Coming Soon</p>
-                        <h3 class="book-title">The Extraordinary Penelope Lemon</h3>
-                        <span class="book-age">Middle Grade</span>
-                        <p class="book-description">
-                            Ten-year-old Penelope Lemon discovers that the overgrown corner 
-                            of her backyard is home to something impossible—fairies. Real ones. 
-                            And they're at war. Now Penelope must navigate ancient grudges, 
-                            tiny politics, and her own doubts to bring peace to her garden.
-                        </p>
-                        <p class="book-tagline">
-                            A story about seeing the magic that was always there.
-                        </p>
-                    </article>
+    <div class="scroll-journey">
+        <div class="viewport" id="viewport">
+            <div class="sky" id="sky"></div>
 
-                    <article class="book-card book-bone-eaters">
-                        <p class="book-label">Coming Soon</p>
-                        <h3 class="book-title">Bone Eaters</h3>
-                        <span class="book-age">Young Adult</span>
-                        <p class="book-description">
-                            You were told tooth fairies leave coins under pillows. You weren't 
-                            told what they really are. For centuries, an ancient curse kept the 
-                            Bone Eaters bound—tiny unseelie fae who could only consume teeth that 
-                            fell on their own. Now the curse is broken, and they hunger for more. 
-                            When the Bone Eaters take his sister, Fergus will do whatever it takes 
-                            to get her back.
-                        </p>
-                        <p class="book-tagline">
-                            A dark fantasy about the true origin of tooth fairies.
-                        </p>
-                    </article>
+            <!-- Foliage will be dynamically inserted here -->
 
+            <!-- Section 0: Hero -->
+            <div class="content-section" id="section0" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div class="content-card">
+                    <img src="assets/img/me.png" alt="R. L. Garth" class="author-image">
+                    <h1>R. L. Garth</h1>
+                    <p class="subtitle">Author of Children's Tales</p>
+                    <p class="lead">Stories of magic, wonder, and the quiet adventures that live in every child's imagination.</p>
                 </div>
-            </section>
+            </div>
 
-            <div class="divider"></div>
+            <!-- Section 1: Penelope -->
+            <div class="content-section" id="section1" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div class="content-card">
+                    <h2>Coming Soon</h2>
+                    <article class="book-card book-penelope">
+                        <p class="book-label">Middle Grade</p>
+                        <h3 class="book-title">The Extraordinary Penelope Lemon</h3>
+                        <span class="book-age">Ages 8-12</span>
+                        <p class="book-description">Ten-year-old Penelope Lemon discovers that the overgrown corner of her backyard is home to something impossible—fairies. Real ones. And they're at war.</p>
+                        <p class="book-tagline">A story about seeing the magic that was always there.</p>
+                    </article>
+                </div>
+            </div>
 
-            <section>
-                <h2>About the Author</h2>
-                <p>
-                    R. L. Garth started telling stories to his children—once they 
-                    outgrew them, he decided to write some of them down. Creating 
-                    on Dharug Country.
-                </p>
-            </section>
+            <!-- Section 2: Bone Eaters -->
+            <div class="content-section" id="section2" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div class="content-card content-card-dark">
+                    <h2>Into the Darkness</h2>
+                    <article class="book-card book-bone-eaters">
+                        <p class="book-label">Young Adult</p>
+                        <h3 class="book-title">Bone Eaters</h3>
+                        <span class="book-age">Ages 14+</span>
+                        <p class="book-description">You were told tooth fairies leave coins under pillows. You weren't told what they really are. When the Bone Eaters take his sister, Fergus will do whatever it takes to get her back.</p>
+                        <p class="book-tagline">A dark fantasy about the true origin of tooth fairies.</p>
+                    </article>
+                </div>
+            </div>
 
-            <div class="divider"></div>
-
-            <section>
-                <h2>Get in Touch</h2>
-                <ul class="contact-list">
-                    <li>
-                        <a href="https://www.instagram.com/rlgarth/" target="_blank" rel="noopener">
-                            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                            Follow on Instagram
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.redbubble.com/people/creepingcards/shop" target="_blank" rel="noopener">
-                            <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.302 0 9.6 4.298 9.6 9.6s-4.298 9.6-9.6 9.6S2.4 17.302 2.4 12 6.698 2.4 12 2.4zm-2.4 4.8v9.6h2.4v-3.6h1.2c1.988 0 3.6-1.612 3.6-3.6s-1.612-3.6-3.6-3.6h-3.6zm2.4 2.4h1.2c.663 0 1.2.537 1.2 1.2s-.537 1.2-1.2 1.2H12V9.6z"/></svg>
-                            Greeting Cards on Redbubble
-                        </a>
-                    </li>
-                    <li>
-                        <a href="mailto:author@rlgarth.com">
-                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                            author@rlgarth.com
-                        </a>
-                    </li>
-                </ul>
-            </section>
-
-            <footer>
-                <p>© 2025 R. L. Garth</p>
-            </footer>
+            <!-- Section 3: About -->
+            <div class="content-section" id="section3" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <div class="content-card">
+                    <h2>About the Author</h2>
+                    <p>R. L. Garth started telling stories to his children—once they outgrew them, he decided to write some of them down. Creating on Dharug Country.</p>
+                    <h2 style="margin-top: 30px;">Get in Touch</h2>
+                    <ul class="contact-list">
+                        <li><a href="https://www.instagram.com/rlgarth/" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a></li>
+                        <li><a href="mailto:author@rlgarth.com"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>author@rlgarth.com</a></li>
+                    </ul>
+                    <footer><p>© 2025 R. L. Garth</p></footer>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Force scroll to top on page load/reload
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        const viewport = document.getElementById('viewport');
+        const sky = document.getElementById('sky');
+        const progress = document.getElementById('progress');
+        const scrollHint = document.getElementById('scrollHint');
+        const entryScreen = document.getElementById('entryScreen');
+        const navBar = document.getElementById('navBar');
+        let entryDismissed = false;
+
+        // Section timings (used by nav and scroll detection)
+        const sections = [
+            { start: 0, end: 0.22, id: 'section0' },
+            { start: 0.22, end: 0.45, id: 'section1' },
+            { start: 0.45, end: 0.72, id: 'section2' },
+            { start: 0.72, end: 1, id: 'section3' }
+        ];
+
+        // Nav link click handlers
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const sectionIndex = parseInt(e.target.dataset.section);
+                const targetPercent = (sections[sectionIndex].start + sections[sectionIndex].end) / 2;
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                window.scrollTo({ top: targetPercent * maxScroll, behavior: 'smooth' });
+            });
+        });
+
+        // Create foliage elements
+        const foliageElements = [];
+
+        // Layer 1: Background leaves (furthest, smaller, slightly blurred)
+        for (let i = 0; i < 30; i++) {
+            createFoliageItem('assets/img/leaves.svg', {
+                sizeRange: [80, 150],
+                z: 0.5 + Math.random() * 0.5,
+                opacity: 0.4 + Math.random() * 0.2,
+                blur: 1 + Math.random() * 2,
+                coverage: 'full',
+                isDark: false
+            });
+        }
+
+        // Layer 2: Mid leaves (medium depth)
+        for (let i = 0; i < 40; i++) {
+            createFoliageItem('assets/img/leaves.svg', {
+                sizeRange: [120, 220],
+                z: 1 + Math.random() * 1,
+                opacity: 0.6 + Math.random() * 0.2,
+                blur: 0,
+                coverage: 'full',
+                isDark: false
+            });
+        }
+
+        // Layer 3: Foreground leaves (closest, largest)
+        for (let i = 0; i < 25; i++) {
+            createFoliageItem('assets/img/leaves.svg', {
+                sizeRange: [180, 320],
+                z: 2 + Math.random() * 1.5,
+                opacity: 0.8 + Math.random() * 0.2,
+                blur: 0,
+                coverage: 'edges',
+                isDark: false
+            });
+        }
+
+        // Layer 4: Flowers on top (pink)
+        for (let i = 0; i < 10; i++) {
+            createFoliageItem('assets/img/flower-pink.svg', {
+                sizeRange: [35, 60],
+                z: 2.5 + Math.random() * 1,
+                opacity: 0.9,
+                blur: 0,
+                coverage: 'scattered',
+                isDark: false
+            });
+        }
+
+        // Layer 5: Flowers on top (yellow)
+        for (let i = 0; i < 8; i++) {
+            createFoliageItem('assets/img/flower-yellow.svg', {
+                sizeRange: [30, 50],
+                z: 2.5 + Math.random() * 1,
+                opacity: 0.9,
+                blur: 0,
+                coverage: 'scattered',
+                isDark: false
+            });
+        }
+
+        // Layer 6: Flowers on top (blue)
+        for (let i = 0; i < 8; i++) {
+            createFoliageItem('assets/img/flower-blue.svg', {
+                sizeRange: [32, 55],
+                z: 2.5 + Math.random() * 1,
+                opacity: 0.9,
+                blur: 0,
+                coverage: 'scattered',
+                isDark: false
+            });
+        }
+
+        // DARK SECTION: Tree trunks (vertical, different depths)
+        for (let i = 0; i < 20; i++) {
+            createFoliageItem('assets/img/dark-trunk.svg', {
+                sizeRange: [200, 450],
+                z: 0.5 + Math.random() * 2.5,
+                opacity: 0,  // Start hidden
+                blur: Math.random() < 0.3 ? 1 : 0,
+                coverage: 'vertical',
+                isDark: true
+            });
+        }
+
+        // DARK SECTION: Spider webs
+        for (let i = 0; i < 12; i++) {
+            createFoliageItem('assets/img/spider-web.svg', {
+                sizeRange: [100, 200],
+                z: 1 + Math.random() * 2,
+                opacity: 0,  // Start hidden
+                blur: 0,
+                coverage: 'corners',
+                isDark: true
+            });
+        }
+
+        // DARK SECTION: Scattered bones
+        for (let i = 0; i < 5; i++) {
+            createFoliageItem('assets/img/bone.svg', {
+                sizeRange: [60, 120],
+                z: 1.5 + Math.random() * 1.5,
+                opacity: 0,  // Start hidden
+                blur: 0,
+                coverage: 'scattered',
+                isDark: true
+            });
+        }
+
+        function createFoliageItem(src, opts) {
+            const el = document.createElement('div');
+            el.className = 'foliage-item';
+            
+            const size = opts.sizeRange[0] + Math.random() * (opts.sizeRange[1] - opts.sizeRange[0]);
+            let x, y;
+            let rotation = Math.random() * 360;
+            
+            if (opts.coverage === 'full') {
+                // Cover entire viewport
+                x = -10 + Math.random() * 120;
+                y = -10 + Math.random() * 120;
+            } else if (opts.coverage === 'edges') {
+                // Concentrate on edges but some middle
+                const edge = Math.random();
+                if (edge < 0.3) { x = -5 + Math.random() * 30; y = Math.random() * 100; }
+                else if (edge < 0.6) { x = 70 + Math.random() * 35; y = Math.random() * 100; }
+                else if (edge < 0.8) { x = Math.random() * 100; y = -5 + Math.random() * 30; }
+                else { x = Math.random() * 100; y = 70 + Math.random() * 35; }
+            } else if (opts.coverage === 'vertical') {
+                // Trunks - spread across width, anchored at bottom
+                x = -10 + Math.random() * 120;
+                y = 20 + Math.random() * 80;  // Lower half mostly
+                rotation = -10 + Math.random() * 20;  // Slight tilt only
+            } else if (opts.coverage === 'corners') {
+                // Webs in corners
+                const corner = Math.floor(Math.random() * 4);
+                if (corner === 0) { x = -5 + Math.random() * 25; y = -5 + Math.random() * 25; }
+                else if (corner === 1) { x = 75 + Math.random() * 30; y = -5 + Math.random() * 25; }
+                else if (corner === 2) { x = -5 + Math.random() * 25; y = 75 + Math.random() * 30; }
+                else { x = 75 + Math.random() * 30; y = 75 + Math.random() * 30; }
+                rotation = Math.random() * 360;
+            } else {
+                // Scattered
+                x = 5 + Math.random() * 90;
+                y = 5 + Math.random() * 90;
+            }
+            
+            const blur = opts.blur || 0;
+            
+            el.style.cssText = `
+                width: ${size}px;
+                height: ${opts.coverage === 'vertical' ? size * 2.5 : size}px;
+                left: ${x}%;
+                top: ${y}%;
+                z-index: ${Math.floor(opts.z * 10)};
+                opacity: ${opts.opacity};
+                filter: blur(${blur}px);
+                transform: rotate(${rotation}deg);
+            `;
+            
+            const img = document.createElement('img');
+            img.src = src;
+            el.appendChild(img);
+            
+            foliageElements.push({
+                el: el,
+                baseX: x,
+                baseY: y,
+                z: opts.z,
+                rotation: rotation,
+                size: size,
+                baseOpacity: opts.opacity,
+                isFlower: src.includes('flower'),
+                isDark: opts.isDark || false
+            });
+            
+            viewport.insertBefore(el, viewport.firstChild);
+        }
+
+        // Sky colors
+        const skyStops = [
+            { pos: 0, color: '#f8f4ef' },
+            { pos: 0.2, color: '#e8f0e8' },
+            { pos: 0.35, color: '#d0e0d0' },
+            { pos: 0.45, color: '#4a5060' },
+            { pos: 0.55, color: '#1a1a28' },
+            { pos: 0.65, color: '#1a1a28' },
+            { pos: 0.75, color: '#5a6070' },
+            { pos: 0.85, color: '#e0e8e0' },
+            { pos: 1, color: '#f8f4ef' }
+        ];
+
+        function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1,3), 16);
+            const g = parseInt(hex.slice(3,5), 16);
+            const b = parseInt(hex.slice(5,7), 16);
+            return {r, g, b};
+        }
+
+        function interpolateColor(stops, pos) {
+            let lower = stops[0], upper = stops[stops.length-1];
+            for (let i = 0; i < stops.length - 1; i++) {
+                if (pos >= stops[i].pos && pos <= stops[i+1].pos) {
+                    lower = stops[i];
+                    upper = stops[i+1];
+                    break;
+                }
+            }
+            const t = upper.pos === lower.pos ? 0 : (pos - lower.pos) / (upper.pos - lower.pos);
+            const c1 = hexToRgb(lower.color), c2 = hexToRgb(upper.color);
+            const r = Math.round(c1.r + (c2.r - c1.r) * t);
+            const g = Math.round(c1.g + (c2.g - c1.g) * t);
+            const b = Math.round(c1.b + (c2.b - c1.b) * t);
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function update() {
+            const scrollY = window.scrollY;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = Math.min(1, Math.max(0, scrollY / maxScroll));
+
+            // Progress bar
+            progress.style.width = (scrollPercent * 100) + '%';
+
+            // Hide entry screen after small scroll
+            if (scrollPercent > 0.01 && !entryDismissed) {
+                entryScreen.classList.add('hidden');
+                entryDismissed = true;
+            }
+
+            // Show nav bar after entry dismissed
+            if (scrollPercent > 0.02) {
+                navBar.classList.add('visible');
+            } else {
+                navBar.classList.remove('visible');
+            }
+
+            // Dark nav bar in dark section
+            if (scrollPercent > 0.4 && scrollPercent < 0.7) {
+                navBar.classList.add('dark');
+            } else {
+                navBar.classList.remove('dark');
+            }
+
+            // Show scroll hint in middle sections, hide at start and end
+            if (scrollPercent > 0.15 && scrollPercent < 0.85) {
+                scrollHint.classList.add('visible');
+            } else {
+                scrollHint.classList.remove('visible');
+            }
+
+            // Sky color
+            sky.style.background = interpolateColor(skyStops, scrollPercent);
+
+            // Foliage parallax - spread outward from center like parting curtains
+            const spread = scrollPercent * 120;
+            
+            // Dark section detection with smooth transition
+            const darkStart = 0.38;
+            const darkPeak = 0.55;
+            const darkEnd = 0.72;
+            const inDarkZone = scrollPercent > darkStart && scrollPercent < darkEnd;
+            
+            // Calculate dark intensity (0 to 1 and back)
+            let darkIntensity = 0;
+            if (scrollPercent >= darkStart && scrollPercent <= darkPeak) {
+                darkIntensity = (scrollPercent - darkStart) / (darkPeak - darkStart);
+            } else if (scrollPercent > darkPeak && scrollPercent <= darkEnd) {
+                darkIntensity = 1 - (scrollPercent - darkPeak) / (darkEnd - darkPeak);
+            }
+
+            foliageElements.forEach(item => {
+                const xFromCenter = item.baseX - 50;
+                const yFromCenter = item.baseY - 50;
+                
+                // More spread for items further from center
+                const distFromCenter = Math.sqrt(xFromCenter * xFromCenter + yFromCenter * yFromCenter);
+                const spreadMultiplier = 0.5 + distFromCenter / 70;
+                
+                let moveX, moveY, scale;
+                
+                if (item.isDark) {
+                    // Dark elements: zoom IN effect (scale up dramatically as you enter dark zone)
+                    const zoomProgress = darkIntensity;
+                    scale = 0.3 + zoomProgress * item.z * 1.2;  // Start small, zoom in
+                    moveX = xFromCenter * zoomProgress * 30 * item.z / 50;
+                    moveY = yFromCenter * zoomProgress * 30 * item.z / 50;
+                    
+                    // Fade in during dark section
+                    item.el.style.opacity = darkIntensity * 0.85;
+                } else {
+                    // Light elements: spread outward
+                    moveX = xFromCenter * spread * item.z * spreadMultiplier / 50;
+                    moveY = yFromCenter * spread * item.z * spreadMultiplier / 50;
+                    scale = 1 + scrollPercent * item.z * 0.2;
+                    
+                    // Fade out in dark section
+                    if (inDarkZone) {
+                        item.el.style.opacity = item.isFlower ? 0.05 : (1 - darkIntensity) * 0.4;
+                    } else {
+                        item.el.style.opacity = item.baseOpacity || '';
+                    }
+                }
+                
+                item.el.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale}) rotate(${item.rotation}deg)`;
+            });
+
+            // Sections
+            sections.forEach((sec, index) => {
+                const el = document.getElementById(sec.id);
+                const center = (sec.start + sec.end) / 2;
+                const range = (sec.end - sec.start) / 2 * 0.85;
+                let isActive = Math.abs(scrollPercent - center) < range;
+                
+                // Keep last section active at the very end
+                if (index === sections.length - 1 && scrollPercent > 0.85) {
+                    isActive = true;
+                }
+                
+                el.classList.toggle('active', isActive);
+            });
+        }
+
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => { update(); ticking = false; });
+                ticking = true;
+            }
+        });
+
+        update();
+    </script>
 </body>
 </html>
