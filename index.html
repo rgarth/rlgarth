@@ -406,12 +406,7 @@
             gap: 8px;
             background: rgba(248, 244, 239, 0.9);
             backdrop-filter: blur(10px);
-            transition: background 0.5s ease, opacity 0.5s ease;
-            opacity: 0;
-        }
-
-        .nav-bar.visible {
-            opacity: 1;
+            transition: background 0.5s ease;
         }
 
         .nav-bar.dark {
@@ -472,7 +467,34 @@
             .author-image { width: 110px; height: 110px; }
             .book-card { padding: 18px; }
             .book-title { font-size: 1.3rem; }
-            .foliage-item { transform: scale(0.6) !important; }
+            
+            /* Simpler mobile experience */
+            .foliage-item { 
+                transform: scale(0.5) !important;
+                transition: none !important;
+            }
+            
+            .nav-bar {
+                gap: 4px;
+                padding: 10px 15px;
+            }
+            
+            .nav-link {
+                font-size: 0.75rem;
+                padding: 5px 8px;
+            }
+            
+            .nav-separator {
+                display: none;
+            }
+        }
+        
+        /* Even smaller screens */
+        @media (max-width: 400px) {
+            .nav-link {
+                font-size: 0.7rem;
+                padding: 4px 6px;
+            }
         }
     </style>
 </head>
@@ -572,13 +594,15 @@
         }
         window.scrollTo(0, 0);
 
+        // Detect mobile for simplified experience
+        const isMobile = window.innerWidth <= 600;
+
         const viewport = document.getElementById('viewport');
         const sky = document.getElementById('sky');
         const progress = document.getElementById('progress');
         const scrollHint = document.getElementById('scrollHint');
         const entryScreen = document.getElementById('entryScreen');
         const navBar = document.getElementById('navBar');
-        let entryDismissed = false;
 
         // Section timings (used by nav and scroll detection)
         const sections = [
@@ -601,20 +625,39 @@
         // Create foliage elements
         const foliageElements = [];
 
+        // Reduced counts for mobile
+        const counts = isMobile ? {
+            bgLeaves: 10,
+            midLeaves: 15,
+            fgLeaves: 8,
+            flowers: 4,
+            trunks: 8,
+            webs: 4,
+            bones: 2
+        } : {
+            bgLeaves: 30,
+            midLeaves: 40,
+            fgLeaves: 25,
+            flowers: 10,
+            trunks: 20,
+            webs: 12,
+            bones: 5
+        };
+
         // Layer 1: Background leaves (furthest, smaller, slightly blurred)
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < counts.bgLeaves; i++) {
             createFoliageItem('assets/img/leaves.svg', {
                 sizeRange: [80, 150],
                 z: 0.5 + Math.random() * 0.5,
                 opacity: 0.4 + Math.random() * 0.2,
-                blur: 1 + Math.random() * 2,
+                blur: isMobile ? 0 : 1 + Math.random() * 2,
                 coverage: 'full',
                 isDark: false
             });
         }
 
         // Layer 2: Mid leaves (medium depth)
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < counts.midLeaves; i++) {
             createFoliageItem('assets/img/leaves.svg', {
                 sizeRange: [120, 220],
                 z: 1 + Math.random() * 1,
@@ -626,7 +669,7 @@
         }
 
         // Layer 3: Foreground leaves (closest, largest)
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < counts.fgLeaves; i++) {
             createFoliageItem('assets/img/leaves.svg', {
                 sizeRange: [180, 320],
                 z: 2 + Math.random() * 1.5,
@@ -638,7 +681,7 @@
         }
 
         // Layer 4: Flowers on top (pink)
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < counts.flowers; i++) {
             createFoliageItem('assets/img/flower-pink.svg', {
                 sizeRange: [35, 60],
                 z: 2.5 + Math.random() * 1,
@@ -650,7 +693,7 @@
         }
 
         // Layer 5: Flowers on top (yellow)
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < Math.floor(counts.flowers * 0.8); i++) {
             createFoliageItem('assets/img/flower-yellow.svg', {
                 sizeRange: [30, 50],
                 z: 2.5 + Math.random() * 1,
@@ -662,7 +705,7 @@
         }
 
         // Layer 6: Flowers on top (blue)
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < Math.floor(counts.flowers * 0.8); i++) {
             createFoliageItem('assets/img/flower-blue.svg', {
                 sizeRange: [32, 55],
                 z: 2.5 + Math.random() * 1,
@@ -674,23 +717,23 @@
         }
 
         // DARK SECTION: Tree trunks (vertical, different depths)
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < counts.trunks; i++) {
             createFoliageItem('assets/img/dark-trunk.svg', {
                 sizeRange: [200, 450],
                 z: 0.5 + Math.random() * 2.5,
-                opacity: 0,  // Start hidden
-                blur: Math.random() < 0.3 ? 1 : 0,
+                opacity: 0,
+                blur: 0,
                 coverage: 'vertical',
                 isDark: true
             });
         }
 
         // DARK SECTION: Spider webs
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < counts.webs; i++) {
             createFoliageItem('assets/img/spider-web.svg', {
                 sizeRange: [100, 200],
                 z: 1 + Math.random() * 2,
-                opacity: 0,  // Start hidden
+                opacity: 0,
                 blur: 0,
                 coverage: 'corners',
                 isDark: true
@@ -698,11 +741,11 @@
         }
 
         // DARK SECTION: Scattered bones
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < counts.bones; i++) {
             createFoliageItem('assets/img/bone.svg', {
                 sizeRange: [60, 120],
                 z: 1.5 + Math.random() * 1.5,
-                opacity: 0,  // Start hidden
+                opacity: 0,
                 blur: 0,
                 coverage: 'scattered',
                 isDark: true
@@ -824,17 +867,11 @@
             // Progress bar
             progress.style.width = (scrollPercent * 100) + '%';
 
-            // Hide entry screen after small scroll
-            if (scrollPercent > 0.01 && !entryDismissed) {
+            // Show/hide entry screen based on scroll position
+            if (scrollPercent > 0.01) {
                 entryScreen.classList.add('hidden');
-                entryDismissed = true;
-            }
-
-            // Show nav bar after entry dismissed
-            if (scrollPercent > 0.02) {
-                navBar.classList.add('visible');
             } else {
-                navBar.classList.remove('visible');
+                entryScreen.classList.remove('hidden');
             }
 
             // Dark nav bar in dark section
@@ -855,7 +892,8 @@
             sky.style.background = interpolateColor(skyStops, scrollPercent);
 
             // Foliage parallax - spread outward from center like parting curtains
-            const spread = scrollPercent * 120;
+            // Reduced effect on mobile for better performance
+            const spread = scrollPercent * (isMobile ? 60 : 120);
             
             // Dark section detection with smooth transition
             const darkStart = 0.38;
@@ -884,9 +922,11 @@
                 if (item.isDark) {
                     // Dark elements: zoom IN effect (scale up dramatically as you enter dark zone)
                     const zoomProgress = darkIntensity;
-                    scale = 0.3 + zoomProgress * item.z * 1.2;  // Start small, zoom in
-                    moveX = xFromCenter * zoomProgress * 30 * item.z / 50;
-                    moveY = yFromCenter * zoomProgress * 30 * item.z / 50;
+                    const zoomMultiplier = isMobile ? 0.6 : 1.2;
+                    scale = 0.3 + zoomProgress * item.z * zoomMultiplier;  // Start small, zoom in
+                    const darkSpread = isMobile ? 15 : 30;
+                    moveX = xFromCenter * zoomProgress * darkSpread * item.z / 50;
+                    moveY = yFromCenter * zoomProgress * darkSpread * item.z / 50;
                     
                     // Fade in during dark section
                     item.el.style.opacity = darkIntensity * 0.85;
@@ -894,7 +934,8 @@
                     // Light elements: spread outward
                     moveX = xFromCenter * spread * item.z * spreadMultiplier / 50;
                     moveY = yFromCenter * spread * item.z * spreadMultiplier / 50;
-                    scale = 1 + scrollPercent * item.z * 0.2;
+                    const scaleMultiplier = isMobile ? 0.1 : 0.2;
+                    scale = 1 + scrollPercent * item.z * scaleMultiplier;
                     
                     // Fade out in dark section
                     if (inDarkZone) {
