@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 400">
+  <!-- Main trunk -->
+  <path d="M55 400 Q52 350 58 300 Q54 250 60 200 Q56 150 62 100 Q58 50 55 0" 
+        stroke="#1a1a2e" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <path d="M58 400 Q55 340 61 280 Q57 220 63 160 Q59 100 56 40" 
+        stroke="#2d1f3d" stroke-width="12" fill="none" stroke-linecap="round"/>
+  
+  <!-- Branch left upper -->
+  <path d="M58 120 Q40 100 20 70 Q10 50 -5 30" 
+        stroke="#1a1a2e" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M30 85 Q20 70 5 55" 
+        stroke="#2d1f3d" stroke-width="5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Branch right upper -->
+  <path d="M62 90 Q80 70 100 50 Q110 35 125 15" 
+        stroke="#1a1a2e" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M90 55 Q105 40 115 20" 
+        stroke="#2d1f3d" stroke-width="4" fill="none" stroke-linecap="round"/>
+  
+  <!-- Branch left mid -->
+  <path d="M55 200 Q35 180 15 170 Q0 160 -15 145" 
+        stroke="#1a1a2e" stroke-width="6" fill="none" stroke-linecap="round"/>
+  
+  <!-- Branch right mid -->
+  <path d="M63 240 Q85 220 105 215 Q115 210 130 200" 
+        stroke="#1a1a2e" stroke-width="5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Small twigs -->
+  <path d="M25 75 Q15 65 10 50" stroke="#3d2a4d" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M95 45 Q100 30 110 20" stroke="#3d2a4d" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M10 165 Q0 155 -10 140" stroke="#3d2a4d" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>
