@@ -501,6 +501,61 @@
             50% { transform: scaleX(-1) translateY(-10px); }
         }
 
+        /* Flying wraiths for Bone Eaters */
+        .wraith {
+            position: absolute;
+            width: 150px;
+            height: auto;
+            pointer-events: none;
+            will-change: transform, opacity;
+            opacity: 0.35;
+            filter: brightness(0.3) contrast(1.2);
+        }
+        
+        .wraith.left-to-right.grow {
+            animation: wraithMoveRightGrow var(--duration) linear forwards;
+        }
+        
+        .wraith.left-to-right.shrink {
+            animation: wraithMoveRightShrink var(--duration) linear forwards;
+        }
+        
+        .wraith.right-to-left.grow {
+            animation: wraithMoveLeftGrow var(--duration) linear forwards;
+        }
+        
+        .wraith.right-to-left.shrink {
+            animation: wraithMoveLeftShrink var(--duration) linear forwards;
+        }
+        
+        @keyframes wraithMoveRightGrow {
+            0% { left: -200px; top: var(--start-y); opacity: 0; transform: scale(0.6); }
+            10% { opacity: 0.35; }
+            85% { opacity: 0.35; }
+            100% { left: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scale(1.4); }
+        }
+        
+        @keyframes wraithMoveRightShrink {
+            0% { left: -200px; top: var(--start-y); opacity: 0; transform: scale(1.4); }
+            10% { opacity: 0.35; }
+            85% { opacity: 0.35; }
+            100% { left: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scale(0.6); }
+        }
+        
+        @keyframes wraithMoveLeftGrow {
+            0% { right: -200px; top: var(--start-y); opacity: 0; transform: scaleX(-1) scale(0.6); }
+            10% { opacity: 0.35; }
+            85% { opacity: 0.35; }
+            100% { right: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scaleX(-1) scale(1.4); }
+        }
+        
+        @keyframes wraithMoveLeftShrink {
+            0% { right: -200px; top: var(--start-y); opacity: 0; transform: scaleX(-1) scale(1.4); }
+            10% { opacity: 0.35; }
+            85% { opacity: 0.35; }
+            100% { right: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scaleX(-1) scale(0.6); }
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             .content-card {
@@ -1037,8 +1092,8 @@
             // Random direction
             const goingLeft = Math.random() > 0.5;
             
-            // Random vertical position (avoiding very top/bottom)
-            const startY = 20 + Math.random() * 60;
+            // Random vertical position - full canvas
+            const startY = 5 + Math.random() * 90;
             
             // Random size (30-50px)
             const size = 30 + Math.random() * 20;
@@ -1080,7 +1135,8 @@
         
         function isInPenelopeSection() {
             const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-            return scrollPercent >= 0.15 && scrollPercent <= 0.50;
+            // End at 0.38 where dark zone starts - fairies must not appear in dark forest
+            return scrollPercent >= 0.15 && scrollPercent <= 0.38;
         }
         
         function stopFairies() {
@@ -1088,8 +1144,12 @@
                 clearTimeout(fairyTimeout);
                 fairyTimeout = null;
             }
-            // Remove any fairies currently on screen
-            document.querySelectorAll('.fairy').forEach(f => f.remove());
+            // Fade out any fairies currently on screen
+            document.querySelectorAll('.fairy').forEach(f => {
+                f.style.transition = 'opacity 0.4s ease-out';
+                f.style.opacity = '0';
+                setTimeout(() => f.remove(), 400);
+            });
             fairyActive = false;
         }
         
@@ -1105,6 +1165,108 @@
                     stopFairies();
                 }
                 wasInSection = inSection;
+            });
+        }
+
+        // Wraith spawning system for Bone Eaters (dark section)
+        let wraithActive = false;
+        let wraithTimeout = null;
+        
+        function spawnWraith() {
+            if (wraithActive || !isInDarkSection()) {
+                if (isInDarkSection()) {
+                    scheduleNextWraith();
+                }
+                return;
+            }
+            
+            wraithActive = true;
+            
+            const wraith = document.createElement('img');
+            wraith.src = 'assets/img/wraith.svg';
+            
+            // Random direction
+            const goingLeft = Math.random() > 0.5;
+            
+            // Random angle up to 30 degrees (converted to vertical offset)
+            // tan(30°) ≈ 0.577, so max vertical travel is ~58% of horizontal
+            const angle = (Math.random() - 0.5) * 2 * 30; // -30 to +30 degrees
+            const verticalOffset = Math.tan(angle * Math.PI / 180) * 100; // vh offset over 100vw travel
+            
+            // Random starting vertical position (ensure end stays on screen)
+            const startY = 20 + Math.random() * 50;
+            const endY = Math.max(5, Math.min(85, startY + verticalOffset));
+            
+            // 125% bigger size (135-225px)
+            const size = 135 + Math.random() * 90;
+            wraith.style.width = size + 'px';
+            
+            // 25% faster speed (7.5-12 seconds)
+            const duration = 7.5 + Math.random() * 4.5;
+            wraith.style.setProperty('--duration', duration + 's');
+            wraith.style.setProperty('--start-y', startY + 'vh');
+            wraith.style.setProperty('--end-y', endY + 'vh');
+            
+            // Random z-index among dark foliage
+            wraith.style.zIndex = Math.floor(5 + Math.random() * 25);
+            
+            // Random grow or shrink
+            const scaleType = Math.random() > 0.5 ? 'grow' : 'shrink';
+            
+            if (goingLeft) {
+                wraith.className = 'wraith right-to-left ' + scaleType;
+            } else {
+                wraith.className = 'wraith left-to-right ' + scaleType;
+            }
+            
+            document.getElementById('viewport').appendChild(wraith);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                wraith.remove();
+                wraithActive = false;
+                scheduleNextWraith();
+            }, (duration + 0.5) * 1000);
+        }
+        
+        function scheduleNextWraith() {
+            if (wraithTimeout) clearTimeout(wraithTimeout);
+            if (!isInDarkSection()) return;
+            
+            // Random gap: 3-10 seconds before next wraith
+            const gap = 3000 + Math.random() * 7000;
+            wraithTimeout = setTimeout(spawnWraith, gap);
+        }
+        
+        function isInDarkSection() {
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            // Only spawn when it's actually dark (darkIntensity > 0.5)
+            return scrollPercent >= 0.42 && scrollPercent <= 0.68;
+        }
+        
+        function stopWraiths() {
+            if (wraithTimeout) {
+                clearTimeout(wraithTimeout);
+                wraithTimeout = null;
+            }
+            // Immediately remove any wraiths on screen
+            document.querySelectorAll('.wraith').forEach(w => w.remove());
+            wraithActive = false;
+        }
+        
+        // Check dark section on scroll (skip on mobile)
+        if (!isMobile) {
+            let wasInDark = false;
+            window.addEventListener('scroll', () => {
+                const inDark = isInDarkSection();
+                if (inDark && !wasInDark) {
+                    // Entering dark section
+                    wraithTimeout = setTimeout(spawnWraith, 1500);
+                } else if (!inDark && wasInDark) {
+                    // Leaving dark section - immediately remove wraiths
+                    stopWraiths();
+                }
+                wasInDark = inDark;
             });
         }
 
