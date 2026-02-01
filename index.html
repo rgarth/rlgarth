@@ -458,6 +458,49 @@
             width: 0%;
         }
 
+        /* Flying fairies */
+        .fairy {
+            position: absolute;
+            width: 40px;
+            height: auto;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        
+        /* Left to right fairy */
+        .fairy.left-to-right {
+            animation: fairyMoveRight var(--duration) linear forwards, fairyBob 0.5s ease-in-out infinite;
+        }
+        
+        /* Right to left fairy (flipped) */
+        .fairy.right-to-left {
+            animation: fairyMoveLeft var(--duration) linear forwards, fairyBobFlipped 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes fairyMoveRight {
+            0% { left: -60px; opacity: 0; }
+            5% { opacity: 0.95; }
+            92% { opacity: 0.95; }
+            100% { left: calc(100vw + 60px); opacity: 0; }
+        }
+        
+        @keyframes fairyMoveLeft {
+            0% { right: -60px; opacity: 0; }
+            5% { opacity: 0.95; }
+            92% { opacity: 0.95; }
+            100% { right: calc(100vw + 60px); opacity: 0; }
+        }
+        
+        @keyframes fairyBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes fairyBobFlipped {
+            0%, 100% { transform: scaleX(-1) translateY(0); }
+            50% { transform: scaleX(-1) translateY(-10px); }
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             .content-card {
@@ -971,6 +1014,99 @@
                 ticking = true;
             }
         });
+
+        // Fairy spawning system
+        const fairyImages = ['assets/img/fairy-pink.png', 'assets/img/fairy-yellow.png'];
+        let fairyActive = false;
+        let fairyTimeout = null;
+        
+        function spawnFairy() {
+            if (fairyActive || !isInPenelopeSection()) {
+                // Schedule next check if still in section
+                if (isInPenelopeSection()) {
+                    scheduleNextFairy();
+                }
+                return;
+            }
+            
+            fairyActive = true;
+            
+            const fairy = document.createElement('img');
+            fairy.src = fairyImages[Math.floor(Math.random() * fairyImages.length)];
+            
+            // Random direction
+            const goingLeft = Math.random() > 0.5;
+            
+            // Random vertical position (avoiding very top/bottom)
+            const startY = 20 + Math.random() * 60;
+            
+            // Random size (30-50px)
+            const size = 30 + Math.random() * 20;
+            fairy.style.width = size + 'px';
+            
+            // Random speed (7-11 seconds to cross)
+            const duration = 7 + Math.random() * 4;
+            fairy.style.setProperty('--duration', duration + 's');
+            fairy.style.top = startY + 'vh';
+            
+            // Random z-index: 1-25 so fairies weave through foliage (foliage is 5-35)
+            fairy.style.zIndex = Math.floor(1 + Math.random() * 25);
+            
+            if (goingLeft) {
+                fairy.className = 'fairy right-to-left';
+            } else {
+                fairy.className = 'fairy left-to-right';
+            }
+            
+            // Append to viewport so z-index works with foliage/content
+            document.getElementById('viewport').appendChild(fairy);
+            
+            // Remove after animation completes, then schedule next
+            setTimeout(() => {
+                fairy.remove();
+                fairyActive = false;
+                scheduleNextFairy();
+            }, (duration + 0.5) * 1000);
+        }
+        
+        function scheduleNextFairy() {
+            if (fairyTimeout) clearTimeout(fairyTimeout);
+            if (!isInPenelopeSection()) return;
+            
+            // Random gap: 2-8 seconds before next fairy
+            const gap = 2000 + Math.random() * 6000;
+            fairyTimeout = setTimeout(spawnFairy, gap);
+        }
+        
+        function isInPenelopeSection() {
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            return scrollPercent >= 0.15 && scrollPercent <= 0.50;
+        }
+        
+        function stopFairies() {
+            if (fairyTimeout) {
+                clearTimeout(fairyTimeout);
+                fairyTimeout = null;
+            }
+            // Remove any fairies currently on screen
+            document.querySelectorAll('.fairy').forEach(f => f.remove());
+            fairyActive = false;
+        }
+        
+        // Check section on scroll (skip on mobile)
+        if (!isMobile) {
+            let wasInSection = false;
+            window.addEventListener('scroll', () => {
+                const inSection = isInPenelopeSection();
+                if (inSection && !wasInSection) {
+                    // Entering section - spawn first fairy after short delay
+                    fairyTimeout = setTimeout(spawnFairy, 1000);
+                } else if (!inSection && wasInSection) {
+                    stopFairies();
+                }
+                wasInSection = inSection;
+            });
+        }
 
         update();
     </script>
