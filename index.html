@@ -501,59 +501,69 @@
             50% { transform: scaleX(-1) translateY(-10px); }
         }
 
-        /* Flying wraiths for Bone Eaters */
+        /* Flying dark fairies for Bone Eaters */
         .wraith {
             position: absolute;
             width: 150px;
             height: auto;
             pointer-events: none;
             will-change: transform, opacity;
-            opacity: 0.35;
-            filter: brightness(0.3) contrast(1.2);
+            opacity: 0.85;
+            mix-blend-mode: screen;
         }
         
         .wraith.left-to-right.grow {
-            animation: wraithMoveRightGrow var(--duration) linear forwards;
+            animation: wraithMoveRightGrow var(--duration) linear forwards, wraithBob 1.2s ease-in-out infinite;
         }
         
         .wraith.left-to-right.shrink {
-            animation: wraithMoveRightShrink var(--duration) linear forwards;
+            animation: wraithMoveRightShrink var(--duration) linear forwards, wraithBob 1.2s ease-in-out infinite;
         }
         
         .wraith.right-to-left.grow {
-            animation: wraithMoveLeftGrow var(--duration) linear forwards;
+            animation: wraithMoveLeftGrow var(--duration) linear forwards, wraithBobFlipped 1.2s ease-in-out infinite;
         }
         
         .wraith.right-to-left.shrink {
-            animation: wraithMoveLeftShrink var(--duration) linear forwards;
+            animation: wraithMoveLeftShrink var(--duration) linear forwards, wraithBobFlipped 1.2s ease-in-out infinite;
         }
         
         @keyframes wraithMoveRightGrow {
-            0% { left: -200px; top: var(--start-y); opacity: 0; transform: scale(0.6); }
-            10% { opacity: 0.35; }
-            85% { opacity: 0.35; }
-            100% { left: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scale(1.4); }
+            0% { left: -200px; top: var(--start-y); opacity: 0; }
+            10% { opacity: 0.85; }
+            85% { opacity: 0.85; }
+            100% { left: calc(100vw + 200px); top: var(--end-y); opacity: 0; }
         }
         
         @keyframes wraithMoveRightShrink {
-            0% { left: -200px; top: var(--start-y); opacity: 0; transform: scale(1.4); }
-            10% { opacity: 0.35; }
-            85% { opacity: 0.35; }
-            100% { left: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scale(0.6); }
+            0% { left: -200px; top: var(--start-y); opacity: 0; }
+            10% { opacity: 0.85; }
+            85% { opacity: 0.85; }
+            100% { left: calc(100vw + 200px); top: var(--end-y); opacity: 0; }
         }
         
         @keyframes wraithMoveLeftGrow {
-            0% { right: -200px; top: var(--start-y); opacity: 0; transform: scaleX(-1) scale(0.6); }
-            10% { opacity: 0.35; }
-            85% { opacity: 0.35; }
-            100% { right: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scaleX(-1) scale(1.4); }
+            0% { right: -200px; top: var(--start-y); opacity: 0; }
+            10% { opacity: 0.85; }
+            85% { opacity: 0.85; }
+            100% { right: calc(100vw + 200px); top: var(--end-y); opacity: 0; }
         }
         
         @keyframes wraithMoveLeftShrink {
-            0% { right: -200px; top: var(--start-y); opacity: 0; transform: scaleX(-1) scale(1.4); }
-            10% { opacity: 0.35; }
-            85% { opacity: 0.35; }
-            100% { right: calc(100vw + 200px); top: var(--end-y); opacity: 0; transform: scaleX(-1) scale(0.6); }
+            0% { right: -200px; top: var(--start-y); opacity: 0; }
+            10% { opacity: 0.85; }
+            85% { opacity: 0.85; }
+            100% { right: calc(100vw + 200px); top: var(--end-y); opacity: 0; }
+        }
+        
+        @keyframes wraithBob {
+            0%, 100% { transform: translateY(0) scale(var(--scale)); }
+            50% { transform: translateY(-15px) scale(var(--scale)); }
+        }
+        
+        @keyframes wraithBobFlipped {
+            0%, 100% { transform: scaleX(-1) translateY(0) scale(var(--scale)); }
+            50% { transform: scaleX(-1) translateY(-15px) scale(var(--scale)); }
         }
 
         /* Responsive */
@@ -1181,7 +1191,8 @@
             wraithActive = true;
             
             const wraith = document.createElement('img');
-            wraith.src = 'assets/img/wraith.svg';
+            const darkFairies = ['assets/img/dark-fairy.png', 'assets/img/dark-fairy-2.png'];
+            wraith.src = darkFairies[Math.floor(Math.random() * darkFairies.length)];
             
             // Random direction
             const goingLeft = Math.random() > 0.5;
@@ -1195,8 +1206,8 @@
             const startY = 20 + Math.random() * 50;
             const endY = Math.max(5, Math.min(85, startY + verticalOffset));
             
-            // 125% bigger size (135-225px)
-            const size = 135 + Math.random() * 90;
+            // Same size as good fairies (30-50px)
+            const size = 30 + Math.random() * 20;
             wraith.style.width = size + 'px';
             
             // 25% faster speed (7.5-12 seconds)
@@ -1208,8 +1219,10 @@
             // Random z-index among dark foliage
             wraith.style.zIndex = Math.floor(5 + Math.random() * 25);
             
-            // Random grow or shrink
+            // Random scale and grow/shrink type
             const scaleType = Math.random() > 0.5 ? 'grow' : 'shrink';
+            const scale = 0.8 + Math.random() * 0.5; // 0.8 to 1.3
+            wraith.style.setProperty('--scale', scale);
             
             if (goingLeft) {
                 wraith.className = 'wraith right-to-left ' + scaleType;
@@ -1252,21 +1265,19 @@
             wraithActive = false;
         }
         
-        // Check dark section on scroll (skip on mobile)
-        if (!isMobile) {
-            let wasInDark = false;
-            window.addEventListener('scroll', () => {
-                const inDark = isInDarkSection();
-                if (inDark && !wasInDark) {
-                    // Entering dark section
-                    wraithTimeout = setTimeout(spawnWraith, 1500);
-                } else if (!inDark && wasInDark) {
-                    // Leaving dark section - immediately remove wraiths
-                    stopWraiths();
-                }
-                wasInDark = inDark;
-            });
-        }
+        // Check dark section on scroll (works on mobile too)
+        let wasInDark = false;
+        window.addEventListener('scroll', () => {
+            const inDark = isInDarkSection();
+            if (inDark && !wasInDark) {
+                // Entering dark section
+                wraithTimeout = setTimeout(spawnWraith, 1500);
+            } else if (!inDark && wasInDark) {
+                // Leaving dark section - immediately remove wraiths
+                stopWraiths();
+            }
+            wasInDark = inDark;
+        });
 
         update();
     </script>
