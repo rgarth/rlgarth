@@ -1153,20 +1153,18 @@
             fairyActive = false;
         }
         
-        // Check section on scroll (skip on mobile)
-        if (!isMobile) {
-            let wasInSection = false;
-            window.addEventListener('scroll', () => {
-                const inSection = isInPenelopeSection();
-                if (inSection && !wasInSection) {
-                    // Entering section - spawn first fairy after short delay
-                    fairyTimeout = setTimeout(spawnFairy, 1000);
-                } else if (!inSection && wasInSection) {
-                    stopFairies();
-                }
-                wasInSection = inSection;
-            });
-        }
+        // Check section on scroll (fairies work on mobile too)
+        let wasInSection = false;
+        window.addEventListener('scroll', () => {
+            const inSection = isInPenelopeSection();
+            if (inSection && !wasInSection) {
+                // Entering section - spawn first fairy after short delay
+                fairyTimeout = setTimeout(spawnFairy, 1000);
+            } else if (!inSection && wasInSection) {
+                stopFairies();
+            }
+            wasInSection = inSection;
+        });
 
         // Wraith spawning system for Bone Eaters (dark section)
         let wraithActive = false;
