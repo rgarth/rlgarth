@@ -353,13 +353,14 @@ function openExcerpt(excerptName) {
     const modal = document.getElementById('excerptModal');
     const content = document.getElementById('excerptContent');
     
-    fetch(`assets/content/excerpt-${excerptName}.html`)
+    fetch(`/assets/content/excerpt-${excerptName}.html`)
         .then(r => {
             if (!r.ok) throw new Error('Excerpt not found');
             return r.text();
         })
         .then(html => {
             content.innerHTML = html;
+            content.scrollTop = 0;
             content.style.background = excerptName.includes('bone-eaters') ? '#0d0d14' : '#fefdfb';
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
