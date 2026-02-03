@@ -61,11 +61,13 @@ const SKY_STOPS = [
 // INITIALIZATION
 // ============================================
 
-// Force scroll to top on page load/reload
+// Force scroll to top on page load/reload (unless there's a hash)
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
 }
-window.scrollTo(0, 0);
+if (!window.location.hash) {
+    window.scrollTo(0, 0);
+}
 
 // Detect mobile for simplified experience
 const isMobile = window.innerWidth <= 600;
