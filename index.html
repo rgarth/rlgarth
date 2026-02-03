@@ -6,6 +6,23 @@
     <title>R. L. Garth | Children's Author</title>
     <meta name="description" content="R. L. Garth - Children's author of whimsical tales filled with magic and wonder.">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="R. L. Garth | Children's Author">
+    <meta property="og:description" content="Stories of magic, wonder, and the quiet adventures that live in every child's imagination.">
+    <meta property="og:image" content="https://rlgarth.com/assets/img/me.jpg">
+    <meta property="og:url" content="https://rlgarth.com">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="R. L. Garth | Children's Author">
+    <meta name="twitter:description" content="Stories of magic, wonder, and the quiet adventures that live in every child's imagination.">
+    <meta name="twitter:image" content="https://rlgarth.com/assets/img/me.jpg">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -47,7 +64,7 @@
             <div class="sky" id="sky"></div>
 
             <!-- Section 0: Home -->
-            <div class="content-section" id="section0" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div class="content-section" id="section0">
                 <div class="content-card">
                     <img src="assets/img/me.jpg" alt="R. L. Garth" class="author-image">
                     <h1>R. L. Garth</h1>
@@ -57,7 +74,7 @@
             </div>
 
             <!-- Section 1: Penelope Lemon -->
-            <div class="content-section" id="section1" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div class="content-section" id="section1">
                 <div class="content-card">
                     <h2>Coming Soon</h2>
                     <article class="book-card book-penelope">
@@ -72,22 +89,22 @@
             </div>
 
             <!-- Section 2: Bone Eaters -->
-            <div class="content-section" id="section2" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div class="content-section" id="section2">
                 <div class="content-card content-card-dark">
                     <h2>Coming Soon</h2>
                     <article class="book-card book-bone-eaters">
                         <p class="book-label">Young Adult</p>
                         <h3 class="book-title">Bone Eaters</h3>
                         <span class="book-age">Ages 14+</span>
-                        <p class="book-description">In a land where bones hold ancient power, Fergus must journey into the forbidden forest to find his missing sister—and confront the creatures that took her.</p>
-                        <p class="book-tagline">Some hungers can never be satisfied.</p>
+                        <p class="book-description">You were told tooth fairies leave coins under pillows. You weren't told what they really are. When the Bone Eaters take his sister, Fergus will do whatever it takes to get her back.</p>
+                        <p class="book-tagline">A dark fantasy about the true origin of tooth fairies.</p>
                         <a href="#" class="excerpt-link excerpt-link-dark" onclick="openExcerpt('bone-eaters-prologue'); return false;">Read the Prologue</a>
                     </article>
                 </div>
             </div>
 
             <!-- Section 3: About -->
-            <div class="content-section" id="section3" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div class="content-section" id="section3">
                 <div class="content-card">
                     <h2>About the Author</h2>
                     <p>R. L. Garth writes stories for young readers who believe—or want to believe—that magic hides in ordinary places. When not writing, you might find him wandering through overgrown gardens, wondering what lives there.</p>
@@ -106,7 +123,7 @@
                         </li>
                     </ul>
                     <footer>
-                        <p>&copy; 2025 R. L. Garth</p>
+                        <p>&copy; <span id="year"></span> R. L. Garth</p>
                     </footer>
                 </div>
             </div>
