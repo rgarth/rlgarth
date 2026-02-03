@@ -82,16 +82,49 @@ const navBar = document.getElementById('navBar');
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+// Hash to section index mapping
+const hashToSection = {
+    'home': 0,
+    'penelope': 1,
+    'boneeaters': 2,
+    'stories': 3,
+    'about': 4
+};
+
+// Navigate to section by index
+function navigateToSection(sectionIndex) {
+    const section = CONFIG.sections[sectionIndex];
+    if (!section) return;
+    const targetPercent = (section.start + section.end) / 2;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: targetPercent * maxScroll, behavior: 'smooth' });
+}
+
 // Nav link click handlers
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
+        e.preventDefault();
         const sectionIndex = parseInt(e.target.dataset.section);
-        const section = CONFIG.sections[sectionIndex];
-        const targetPercent = (section.start + section.end) / 2;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        window.scrollTo({ top: targetPercent * maxScroll, behavior: 'smooth' });
+        navigateToSection(sectionIndex);
     });
 });
+
+// Handle hash-based navigation
+function handleHash() {
+    const hash = window.location.hash.slice(1); // Remove the # symbol
+    if (hash && hashToSection.hasOwnProperty(hash)) {
+        // Small delay to ensure page is loaded
+        setTimeout(() => navigateToSection(hashToSection[hash]), 100);
+    }
+}
+
+// Listen for hash changes
+window.addEventListener('hashchange', handleHash);
+
+// Handle hash on initial page load
+if (window.location.hash) {
+    handleHash();
+}
 
 // ============================================
 // FOLIAGE SYSTEM
