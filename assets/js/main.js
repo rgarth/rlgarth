@@ -107,7 +107,12 @@ document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const sectionIndex = parseInt(e.target.dataset.section);
+        const hash = e.target.getAttribute('href'); // Get the hash from href
         navigateToSection(sectionIndex);
+        // Update URL hash so reload works correctly
+        if (hash) {
+            history.pushState(null, null, hash);
+        }
     });
 });
 
