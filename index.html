@@ -25,11 +25,85 @@
     <!-- Theme Color (Browser UI Tinting) -->
     <meta name="theme-color" content="#f8f4ef">
     
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "R. L. Garth",
+        "url": "https://rlgarth.com",
+        "image": "https://rlgarth.com/assets/img/me.jpg",
+        "jobTitle": "Author",
+        "description": "Author of children's tales, young adult fantasy, and adult fiction exploring magic, wonder, and the quiet adventures that live in every imagination.",
+        "sameAs": [
+            "https://www.instagram.com/rlgarth/"
+        ],
+        "email": "author@rlgarth.com",
+        "workLocation": {
+            "@type": "Place",
+            "name": "Dharug Country"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Book",
+        "name": "The Extraordinary Penelope Lemon",
+        "author": {
+            "@type": "Person",
+            "name": "R. L. Garth"
+        },
+        "genre": "Middle Grade Fiction",
+        "audience": {
+            "@type": "PeopleAudience",
+            "suggestedMinAge": 8,
+            "suggestedMaxAge": 12
+        },
+        "description": "Ten-year-old Penelope Lemon discovers that the overgrown corner of her backyard is home to something impossible—fairies. Real ones. And they're at war.",
+        "inLanguage": "en",
+        "bookFormat": "https://schema.org/Hardcover"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Book",
+        "name": "Bone Eaters",
+        "author": {
+            "@type": "Person",
+            "name": "R. L. Garth"
+        },
+        "genre": ["Young Adult", "Dark Fantasy"],
+        "audience": {
+            "@type": "PeopleAudience",
+            "suggestedMinAge": 14
+        },
+        "description": "You were told tooth fairies leave coins under pillows. You weren't told what they really are. When the Bone Eaters take his sister, Fergus will do whatever it takes to get her back.",
+        "inLanguage": "en",
+        "bookFormat": "https://schema.org/Hardcover"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": "Remy's Boxes",
+        "author": {
+            "@type": "Person",
+            "name": "R. L. Garth"
+        },
+        "genre": "Adult Fiction",
+        "description": "A story about shame, healing, and the courage to open what we've kept locked away.",
+        "inLanguage": "en"
+    }
+    </script>
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.min.css">
 </head>
 <body>
     <div class="progress-bar" id="progress"></div>
@@ -155,6 +229,6 @@
         <div class="excerpt-content" id="excerptContent"></div>
     </div>
 
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/main.min.js"></script>
 </body>
 </html>
