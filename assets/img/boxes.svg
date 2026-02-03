@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90">
+  <!-- Box body -->
+  <rect x="5" y="25" width="90" height="60" fill="#c4b49a" stroke="#8b7355" stroke-width="2"/>
+  
+  <!-- Box flaps (open) -->
+  <polygon points="5,25 15,8 50,8 50,25" fill="#d4c4a8" stroke="#8b7355" stroke-width="1.5"/>
+  <polygon points="50,25 50,8 85,8 95,25" fill="#b8a089" stroke="#8b7355" stroke-width="1.5"/>
+  
+  <!-- Center tape line -->
+  <line x1="50" y1="25" x2="50" y2="85" stroke="#8b7355" stroke-width="2"/>
+  
+  <!-- Label -->
+  <rect x="20" y="45" width="60" height="30" fill="#f5f0e6" stroke="#a89880" stroke-width="1"/>
+  <!-- Label lines -->
+  <line x1="25" y1="53" x2="75" y2="53" stroke="#d4c4a8" stroke-width="1"/>
+  <line x1="25" y1="60" x2="75" y2="60" stroke="#d4c4a8" stroke-width="1"/>
+  <line x1="25" y1="67" x2="75" y2="67" stroke="#d4c4a8" stroke-width="1"/>
+</svg>

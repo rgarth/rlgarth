@@ -5,48 +5,56 @@
 // ============================================
 
 const CONFIG = {
-    // Section boundaries (scroll percentage)
+    // Section boundaries (scroll percentage) - 5 sections now
     sections: [
-        { start: 0, end: 0.22, id: 'section0' },
-        { start: 0.22, end: 0.45, id: 'section1' },
-        { start: 0.45, end: 0.72, id: 'section2' },
-        { start: 0.72, end: 1, id: 'section3' }
+        { start: 0, end: 0.18, id: 'section0' },      // Home
+        { start: 0.18, end: 0.36, id: 'section1' },   // Penelope Lemon
+        { start: 0.36, end: 0.56, id: 'section2' },   // Bone Eaters
+        { start: 0.56, end: 0.78, id: 'section3' },   // Short Stories
+        { start: 0.78, end: 1, id: 'section4' }       // About
     ],
     
-    // Dark zone thresholds
+    // Dark zone thresholds (Bone Eaters)
     dark: {
-        start: 0.38,
-        peak: 0.55,
-        end: 0.72
+        start: 0.30,
+        peak: 0.46,
+        end: 0.56
+    },
+    
+    // Paper zone thresholds (Short Stories)
+    paper: {
+        start: 0.56,
+        peak: 0.67,
+        end: 0.78
     },
     
     // Fairy spawn zones
-    fairyZone: { start: 0.15, end: 0.38 },
-    wraithZone: { start: 0.42, end: 0.68 },
+    fairyZone: { start: 0.12, end: 0.30 },
+    wraithZone: { start: 0.36, end: 0.54 },
     
-    // Foliage counts
+    // Foliage counts - reduced to ~80 for performance test
     foliage: {
-        mobile: { bgLeaves: 10, midLeaves: 15, fgLeaves: 8, flowers: 4, trunks: 8, webs: 4, bones: 2 },
-        desktop: { bgLeaves: 30, midLeaves: 40, fgLeaves: 25, flowers: 10, trunks: 20, webs: 12, bones: 5 }
+        mobile: { bgLeaves: 5, midLeaves: 8, fgLeaves: 4, flowers: 3, trunks: 4, webs: 3, bones: 2, papers: 2, pencils: 2, boxes: 2, cabinets: 1 },
+        desktop: { bgLeaves: 12, midLeaves: 16, fgLeaves: 10, flowers: 5, trunks: 8, webs: 5, bones: 3, papers: 3, pencils: 3, boxes: 3, cabinets: 2 }
     },
     
     // Animation settings
     spreadMultiplier: { mobile: 60, desktop: 120 },
     zoomMultiplier: { mobile: 0.6, desktop: 1.2 },
     darkSpread: { mobile: 15, desktop: 30 },
+    paperSpread: { mobile: 15, desktop: 30 },
     scaleMultiplier: { mobile: 0.1, desktop: 0.2 }
 };
 
 const SKY_STOPS = [
-    { pos: 0, color: '#f8f4ef' },
-    { pos: 0.2, color: '#e8f0e8' },
-    { pos: 0.35, color: '#d0e0d0' },
-    { pos: 0.45, color: '#4a5060' },
-    { pos: 0.55, color: '#1a1a28' },
-    { pos: 0.65, color: '#1a1a28' },
-    { pos: 0.75, color: '#5a6070' },
-    { pos: 0.85, color: '#e0e8e0' },
-    { pos: 1, color: '#f8f4ef' }
+    { pos: 0, color: '#f8f4ef' },      // Cream (Home)
+    { pos: 0.18, color: '#e0ebe0' },   // Light green (Penelope)
+    { pos: 0.32, color: '#6a7080' },   // Transition to dark
+    { pos: 0.46, color: '#1a1a28' },   // Dark peak (Bone Eaters)
+    { pos: 0.56, color: '#3a3530' },   // Dark to sepia transition
+    { pos: 0.67, color: '#c8b898' },   // Sepia (Short Stories)
+    { pos: 0.78, color: '#e8dcc8' },   // Light sepia
+    { pos: 1, color: '#f8f4ef' }       // Cream (About)
 ];
 
 // ============================================
@@ -140,22 +148,31 @@ function createFoliageItem(src, opts) {
     
     foliageElements.push({
         el, baseX: x, baseY: y, z: opts.z, rotation, size,
-        baseOpacity: opts.opacity, isFlower: src.includes('flower'), isDark: opts.isDark || false
+        baseOpacity: opts.opacity, isFlower: src.includes('flower'), 
+        isDark: opts.isDark || false, isPaper: opts.isPaper || false
     });
     
     viewport.insertBefore(el, viewport.firstChild);
 }
 
-// Create foliage layers
-for (let i = 0; i < counts.bgLeaves; i++) createFoliageItem('assets/img/leaves.svg', { sizeRange: [80, 150], z: 0.5 + Math.random() * 0.5, opacity: 0.4 + Math.random() * 0.2, blur: isMobile ? 0 : 1 + Math.random() * 2, coverage: 'full', isDark: false });
-for (let i = 0; i < counts.midLeaves; i++) createFoliageItem('assets/img/leaves.svg', { sizeRange: [120, 220], z: 1 + Math.random() * 1, opacity: 0.6 + Math.random() * 0.2, blur: 0, coverage: 'full', isDark: false });
-for (let i = 0; i < counts.fgLeaves; i++) createFoliageItem('assets/img/leaves.svg', { sizeRange: [180, 320], z: 2 + Math.random() * 1.5, opacity: 0.8 + Math.random() * 0.2, blur: 0, coverage: 'edges', isDark: false });
-for (let i = 0; i < counts.flowers; i++) createFoliageItem('assets/img/flower-pink.svg', { sizeRange: [35, 60], z: 2.5 + Math.random() * 1, opacity: 0.9, blur: 0, coverage: 'scattered', isDark: false });
-for (let i = 0; i < Math.floor(counts.flowers * 0.8); i++) createFoliageItem('assets/img/flower-yellow.svg', { sizeRange: [30, 50], z: 2.5 + Math.random() * 1, opacity: 0.9, blur: 0, coverage: 'scattered', isDark: false });
-for (let i = 0; i < Math.floor(counts.flowers * 0.8); i++) createFoliageItem('assets/img/flower-blue.svg', { sizeRange: [32, 55], z: 2.5 + Math.random() * 1, opacity: 0.9, blur: 0, coverage: 'scattered', isDark: false });
-for (let i = 0; i < counts.trunks; i++) createFoliageItem('assets/img/dark-trunk.svg', { sizeRange: [200, 450], z: 0.5 + Math.random() * 2.5, opacity: 0, blur: 0, coverage: 'vertical', isDark: true });
-for (let i = 0; i < counts.webs; i++) createFoliageItem('assets/img/spider-web.svg', { sizeRange: [100, 200], z: 1 + Math.random() * 2, opacity: 0, blur: 0, coverage: 'corners', isDark: true });
-for (let i = 0; i < counts.bones; i++) createFoliageItem('assets/img/bone.svg', { sizeRange: [60, 120], z: 1.5 + Math.random() * 1.5, opacity: 0, blur: 0, coverage: 'scattered', isDark: true });
+// Create foliage layers - Light/Green theme
+for (let i = 0; i < counts.bgLeaves; i++) createFoliageItem('assets/img/leaves.svg', { sizeRange: [80, 150], z: 0.5 + Math.random() * 0.5, opacity: 0.3 + Math.random() * 0.15, blur: 0, coverage: 'full', isDark: false, isPaper: false });
+for (let i = 0; i < counts.midLeaves; i++) createFoliageItem('assets/img/leaves.svg', { sizeRange: [120, 220], z: 1 + Math.random() * 1, opacity: 0.6 + Math.random() * 0.2, blur: 0, coverage: 'full', isDark: false, isPaper: false });
+for (let i = 0; i < counts.fgLeaves; i++) createFoliageItem('assets/img/leaves.svg', { sizeRange: [180, 320], z: 2 + Math.random() * 1.5, opacity: 0.8 + Math.random() * 0.2, blur: 0, coverage: 'edges', isDark: false, isPaper: false });
+for (let i = 0; i < counts.flowers; i++) createFoliageItem('assets/img/flower-pink.svg', { sizeRange: [35, 60], z: 2.5 + Math.random() * 1, opacity: 0.9, blur: 0, coverage: 'scattered', isDark: false, isPaper: false });
+for (let i = 0; i < Math.floor(counts.flowers * 0.8); i++) createFoliageItem('assets/img/flower-yellow.svg', { sizeRange: [30, 50], z: 2.5 + Math.random() * 1, opacity: 0.9, blur: 0, coverage: 'scattered', isDark: false, isPaper: false });
+for (let i = 0; i < Math.floor(counts.flowers * 0.8); i++) createFoliageItem('assets/img/flower-blue.svg', { sizeRange: [32, 55], z: 2.5 + Math.random() * 1, opacity: 0.9, blur: 0, coverage: 'scattered', isDark: false, isPaper: false });
+
+// Create foliage layers - Dark theme (Bone Eaters)
+for (let i = 0; i < counts.trunks; i++) createFoliageItem('assets/img/dark-trunk.svg', { sizeRange: [200, 450], z: 0.5 + Math.random() * 2.5, opacity: 0, blur: 0, coverage: 'vertical', isDark: true, isPaper: false });
+for (let i = 0; i < counts.webs; i++) createFoliageItem('assets/img/spider-web.svg', { sizeRange: [100, 200], z: 1 + Math.random() * 2, opacity: 0, blur: 0, coverage: 'corners', isDark: true, isPaper: false });
+for (let i = 0; i < counts.bones; i++) createFoliageItem('assets/img/bone.svg', { sizeRange: [60, 120], z: 1.5 + Math.random() * 1.5, opacity: 0, blur: 0, coverage: 'scattered', isDark: true, isPaper: false });
+
+// Create foliage layers - Paper theme (Short Stories)
+for (let i = 0; i < counts.papers; i++) createFoliageItem('assets/img/paper.svg', { sizeRange: [60, 100], z: 1 + Math.random() * 1.5, opacity: 0, blur: 0, coverage: 'edges', isDark: false, isPaper: true });
+for (let i = 0; i < counts.pencils; i++) createFoliageItem('assets/img/pencil.svg', { sizeRange: [120, 180], z: 1 + Math.random() * 1.5, opacity: 0, blur: 0, coverage: 'full', isDark: false, isPaper: true });
+for (let i = 0; i < counts.boxes; i++) createFoliageItem('assets/img/boxes.svg', { sizeRange: [80, 140], z: 1 + Math.random() * 1.5, opacity: 0, blur: 0, coverage: 'full', isDark: false, isPaper: true });
+for (let i = 0; i < counts.cabinets; i++) createFoliageItem('assets/img/file-cabinet.svg', { sizeRange: [120, 180], z: 0.8 + Math.random() * 1, opacity: 0, blur: 0, coverage: 'edges', isDark: false, isPaper: true });
 
 // ============================================
 // SKY COLOR SYSTEM
@@ -194,27 +211,39 @@ function isInZone(scrollPercent, zone) {
 
 function update() {
     const scrollPercent = getScrollPercent();
-    const { dark } = CONFIG;
+    const { dark, paper } = CONFIG;
     const spreadMult = isMobile ? CONFIG.spreadMultiplier.mobile : CONFIG.spreadMultiplier.desktop;
 
     progress.style.width = (scrollPercent * 100) + '%';
     entryScreen.classList.toggle('hidden', scrollPercent > 0.01);
-    navBar.classList.toggle('dark', scrollPercent > 0.4 && scrollPercent < 0.7);
-    scrollHint.classList.toggle('visible', scrollPercent > 0.15 && scrollPercent < 0.85);
+    navBar.classList.toggle('dark', scrollPercent > 0.32 && scrollPercent < 0.56);
+    navBar.classList.toggle('sepia', scrollPercent >= 0.56 && scrollPercent < 0.78);
+    scrollHint.classList.toggle('visible', scrollPercent > 0.12 && scrollPercent < 0.90);
     sky.style.background = interpolateColor(SKY_STOPS, scrollPercent);
 
     const spread = scrollPercent * spreadMult;
     const inDarkZone = scrollPercent > dark.start && scrollPercent < dark.end;
+    const inPaperZone = scrollPercent > paper.start && scrollPercent < paper.end;
     
+    // Calculate dark zone intensity
     let darkIntensity = 0;
     if (scrollPercent >= dark.start && scrollPercent <= dark.peak) {
         darkIntensity = (scrollPercent - dark.start) / (dark.peak - dark.start);
     } else if (scrollPercent > dark.peak && scrollPercent <= dark.end) {
         darkIntensity = 1 - (scrollPercent - dark.peak) / (dark.end - dark.peak);
     }
+    
+    // Calculate paper zone intensity
+    let paperIntensity = 0;
+    if (scrollPercent >= paper.start && scrollPercent <= paper.peak) {
+        paperIntensity = (scrollPercent - paper.start) / (paper.peak - paper.start);
+    } else if (scrollPercent > paper.peak && scrollPercent <= paper.end) {
+        paperIntensity = 1 - (scrollPercent - paper.peak) / (paper.end - paper.peak);
+    }
 
     const zoomMult = isMobile ? CONFIG.zoomMultiplier.mobile : CONFIG.zoomMultiplier.desktop;
     const darkSpread = isMobile ? CONFIG.darkSpread.mobile : CONFIG.darkSpread.desktop;
+    const paperSpread = isMobile ? CONFIG.paperSpread.mobile : CONFIG.paperSpread.desktop;
     const scaleMult = isMobile ? CONFIG.scaleMultiplier.mobile : CONFIG.scaleMultiplier.desktop;
 
     foliageElements.forEach(item => {
@@ -224,15 +253,30 @@ function update() {
         let moveX, moveY, scale;
         
         if (item.isDark) {
+            // Dark zone elements (trunks, webs, bones)
             scale = 0.3 + darkIntensity * item.z * zoomMult;
             moveX = xFromCenter * darkIntensity * darkSpread * item.z / 50;
             moveY = yFromCenter * darkIntensity * darkSpread * item.z / 50;
             item.el.style.opacity = darkIntensity * 0.85;
+        } else if (item.isPaper) {
+            // Paper zone elements (papers, pencils, boxes) - semi-transparent
+            scale = 0.4 + paperIntensity * item.z * zoomMult * 0.7;
+            moveX = xFromCenter * paperIntensity * paperSpread * item.z / 50;
+            moveY = yFromCenter * paperIntensity * paperSpread * item.z / 50;
+            item.el.style.opacity = paperIntensity * 0.6;
         } else {
+            // Normal light elements (leaves, flowers)
             moveX = xFromCenter * spread * item.z * spreadMultiplier / 50;
             moveY = yFromCenter * spread * item.z * spreadMultiplier / 50;
             scale = 1 + scrollPercent * item.z * scaleMult;
-            item.el.style.opacity = inDarkZone ? (item.isFlower ? 0.05 : (1 - darkIntensity) * 0.4) : (item.baseOpacity || '');
+            // Fade out in dark and paper zones
+            if (inDarkZone) {
+                item.el.style.opacity = item.isFlower ? 0.05 : (1 - darkIntensity) * 0.4;
+            } else if (inPaperZone) {
+                item.el.style.opacity = item.isFlower ? 0.1 : (1 - paperIntensity) * 0.5;
+            } else {
+                item.el.style.opacity = item.baseOpacity || '';
+            }
         }
         
         item.el.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale}) rotate(${item.rotation}deg)`;
@@ -243,7 +287,7 @@ function update() {
         const center = (sec.start + sec.end) / 2;
         const range = (sec.end - sec.start) / 2 * 0.85;
         let isActive = Math.abs(scrollPercent - center) < range;
-        if (index === CONFIG.sections.length - 1 && scrollPercent > 0.85) isActive = true;
+        if (index === CONFIG.sections.length - 1 && scrollPercent > 0.90) isActive = true;
         el.classList.toggle('active', isActive);
     });
 }
@@ -360,10 +404,20 @@ function openExcerpt(excerptName) {
         })
         .then(html => {
             content.innerHTML = html;
-            content.scrollTop = 0;
-            content.style.background = excerptName.includes('bone-eaters') ? '#0d0d14' : '#fefdfb';
+            // Set background based on story type
+            if (excerptName.includes('bone-eaters')) {
+                content.style.background = '#0d0d14';
+            } else if (excerptName.includes('remys-boxes')) {
+                content.style.background = '#f5f0e6';
+            } else {
+                content.style.background = '#fefdfb';
+            }
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
+            // Scroll to top after modal opens (needs slight delay for render)
+            requestAnimationFrame(() => {
+                content.scrollTop = 0;
+            });
         })
         .catch(err => {
             console.error('Failed to load excerpt:', err);

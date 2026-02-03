@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <!-- Pencil body -->
+  <polygon points="20,15 170,15 170,35 20,35" fill="#c4b49a"/>
+  <!-- Wood grain lines -->
+  <line x1="30" y1="20" x2="160" y2="20" stroke="#b8a089" stroke-width="1"/>
+  <line x1="30" y1="25" x2="160" y2="25" stroke="#b8a089" stroke-width="1"/>
+  <line x1="30" y1="30" x2="160" y2="30" stroke="#b8a089" stroke-width="1"/>
+  <!-- Sharpened tip -->
+  <polygon points="20,15 0,25 20,35" fill="#e8dcc8"/>
+  <polygon points="8,22 0,25 8,28" fill="#5d4e37"/>
+  <!-- Metal ferrule -->
+  <rect x="170" y="14" width="15" height="22" fill="#8b7355"/>
+  <line x1="173" y1="14" x2="173" y2="36" stroke="#6b5d4d" stroke-width="1"/>
+  <line x1="178" y1="14" x2="178" y2="36" stroke="#a89880" stroke-width="1"/>
+  <line x1="182" y1="14" x2="182" y2="36" stroke="#6b5d4d" stroke-width="1"/>
+  <!-- Eraser -->
+  <rect x="185" y="14" width="15" height="22" rx="2" fill="#d4c4a8"/>
+</svg>
