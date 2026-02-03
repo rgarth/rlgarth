@@ -219,7 +219,11 @@ function update() {
     navBar.classList.toggle('dark', scrollPercent > 0.32 && scrollPercent < 0.56);
     navBar.classList.toggle('sepia', scrollPercent >= 0.56 && scrollPercent < 0.78);
     scrollHint.classList.toggle('visible', scrollPercent > 0.12 && scrollPercent < 0.90);
-    sky.style.background = interpolateColor(SKY_STOPS, scrollPercent);
+    
+    // Update sky and body background color (body color controls mobile browser bars)
+    const currentColor = interpolateColor(SKY_STOPS, scrollPercent);
+    sky.style.background = currentColor;
+    document.body.style.backgroundColor = currentColor;
 
     const spread = scrollPercent * spreadMult;
     const inDarkZone = scrollPercent > dark.start && scrollPercent < dark.end;
