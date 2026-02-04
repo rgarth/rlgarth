@@ -476,9 +476,14 @@ a:hover { color: #6b3a3a; }
 }
 
 /* Contact */
+#section4 .content-card {
+    text-align: center;
+}
+
 .contact-list {
     list-style: none;
-    text-align: center;
+    text-align: left;
+    display: inline-block;
 }
 
 .contact-list li { margin-bottom: 10px; }
