@@ -500,7 +500,7 @@ let wasInFairyZone = false;
 let wasInWraithZone = false;
 
 window.addEventListener('scroll', () => {
-    if (!ticking) {
+    if (!ticking && !isNavigating) {
         requestAnimationFrame(() => {
             update();
             
@@ -537,18 +537,31 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeExcer
 // TOUCH SWIPE NAVIGATION (Scroll Snapping)
 // ============================================
 
+let isNavigating = false;
+
 if (isTouchDevice) {
     let touchStartY = 0;
     let touchStartTime = 0;
-    let isNavigating = false;
     
     document.addEventListener('touchstart', (e) => {
+        if (isNavigating) return;
         touchStartY = e.touches[0].clientY;
         touchStartTime = Date.now();
     }, { passive: true });
     
+    document.addEventListener('touchmove', (e) => {
+        // Prevent further touch input during navigation
+        if (isNavigating) {
+            e.preventDefault();
+            return;
+        }
+    }, { passive: false });
+    
     document.addEventListener('touchend', (e) => {
-        if (isNavigating) return;
+        if (isNavigating) {
+            e.preventDefault();
+            return;
+        }
         
         const touchEndY = e.changedTouches[0].clientY;
         const touchEndTime = Date.now();
@@ -561,6 +574,7 @@ if (isTouchDevice) {
         const isSwipe = Math.abs(deltaY) > threshold || velocity > 0.5;
         
         if (isSwipe) {
+            e.preventDefault();
             const scrollPercent = getScrollPercent();
             let targetSection = null;
             
@@ -584,10 +598,10 @@ if (isTouchDevice) {
                 isNavigating = true;
                 navigateToSection(targetSection);
                 // Re-enable after animation completes
-                setTimeout(() => { isNavigating = false; }, 800);
+                setTimeout(() => { isNavigating = false; }, 1200);
             }
         }
-    }, { passive: true });
+    }, { passive: false });
 }
 
 // Initialize
