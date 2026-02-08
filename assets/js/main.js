@@ -72,6 +72,9 @@ if (!window.location.hash) {
 // Detect mobile for simplified experience
 const isMobile = window.innerWidth <= 600;
 
+// Detect touch device
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
 // DOM elements
 const viewport = document.getElementById('viewport');
 const sky = document.getElementById('sky');
@@ -83,6 +86,14 @@ const navBar = document.getElementById('navBar');
 // Set current year in footer
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+// Update "Scroll to enter" text based on device type
+const entryText = document.querySelector('.entry-text');
+const scrollHintText = document.querySelector('.scroll-hint span');
+if (isTouchDevice) {
+    if (entryText) entryText.textContent = 'Swipe to enter';
+    if (scrollHintText) scrollHintText.textContent = 'Swipe';
+}
 
 // Hash to section index mapping
 const hashToSection = {
@@ -521,6 +532,63 @@ window.addEventListener('scroll', () => {
 
 // Escape key closes excerpt
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeExcerpt(); });
+
+// ============================================
+// TOUCH SWIPE NAVIGATION (Scroll Snapping)
+// ============================================
+
+if (isTouchDevice) {
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let isNavigating = false;
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+    }, { passive: true });
+    
+    document.addEventListener('touchend', (e) => {
+        if (isNavigating) return;
+        
+        const touchEndY = e.changedTouches[0].clientY;
+        const touchEndTime = Date.now();
+        const deltaY = touchStartY - touchEndY;
+        const deltaTime = touchEndTime - touchStartTime;
+        const velocity = Math.abs(deltaY) / deltaTime;
+        
+        // Swipe threshold: 50px or faster velocity
+        const threshold = 50;
+        const isSwipe = Math.abs(deltaY) > threshold || velocity > 0.5;
+        
+        if (isSwipe) {
+            const scrollPercent = getScrollPercent();
+            let targetSection = null;
+            
+            // Find current section
+            for (let i = 0; i < CONFIG.sections.length; i++) {
+                const sec = CONFIG.sections[i];
+                const center = (sec.start + sec.end) / 2;
+                if (Math.abs(scrollPercent - center) < (sec.end - sec.start) / 2) {
+                    // Swipe down = go to next (positive deltaY)
+                    // Swipe up = go to previous (negative deltaY)
+                    if (deltaY > 0 && i < CONFIG.sections.length - 1) {
+                        targetSection = i + 1;
+                    } else if (deltaY < 0 && i > 0) {
+                        targetSection = i - 1;
+                    }
+                    break;
+                }
+            }
+            
+            if (targetSection !== null) {
+                isNavigating = true;
+                navigateToSection(targetSection);
+                // Re-enable after animation completes
+                setTimeout(() => { isNavigating = false; }, 800);
+            }
+        }
+    }, { passive: true });
+}
 
 // Initialize
 update();
