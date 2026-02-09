@@ -543,21 +543,38 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeExcer
 // ============================================
 
 let isNavigating = false;
+let currentSection = 0; // Track current section globally
 
 if (isTouchDevice) {
     let touchStartY = 0;
     let touchStartTime = 0;
+    let touchStartSection = 0;
     
     document.addEventListener('touchstart', (e) => {
-        if (isNavigating) return;
-        touchStartY = e.touches[0].clientY;
-        touchStartTime = Date.now();
-    }, { passive: true });
-    
-    document.addEventListener('touchmove', (e) => {
-        // Prevent further touch input during navigation
         if (isNavigating) {
             e.preventDefault();
+            return;
+        }
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+        
+        // Capture which section we're in at START of touch
+        const scrollPercent = getScrollPercent();
+        for (let i = 0; i < CONFIG.sections.length; i++) {
+            const sec = CONFIG.sections[i];
+            const center = (sec.start + sec.end) / 2;
+            if (Math.abs(scrollPercent - center) < (sec.end - sec.start) / 2) {
+                touchStartSection = i;
+                break;
+            }
+        }
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', (e) => {
+        // Prevent ALL scrolling during navigation lock
+        if (isNavigating) {
+            e.preventDefault();
+            e.stopPropagation();
             return;
         }
     }, { passive: false });
@@ -580,27 +597,20 @@ if (isTouchDevice) {
         
         if (isSwipe) {
             e.preventDefault();
-            const scrollPercent = getScrollPercent();
             let targetSection = null;
             
-            // Find current section
-            for (let i = 0; i < CONFIG.sections.length; i++) {
-                const sec = CONFIG.sections[i];
-                const center = (sec.start + sec.end) / 2;
-                if (Math.abs(scrollPercent - center) < (sec.end - sec.start) / 2) {
-                    // Swipe down = go to next (positive deltaY)
-                    // Swipe up = go to previous (negative deltaY)
-                    if (deltaY > 0 && i < CONFIG.sections.length - 1) {
-                        targetSection = i + 1;
-                    } else if (deltaY < 0 && i > 0) {
-                        targetSection = i - 1;
-                    }
-                    break;
-                }
+            // Use the section from touchstart, not current position
+            // Swipe down = go to next (positive deltaY)
+            // Swipe up = go to previous (negative deltaY)
+            if (deltaY > 0 && touchStartSection < CONFIG.sections.length - 1) {
+                targetSection = touchStartSection + 1;
+            } else if (deltaY < 0 && touchStartSection > 0) {
+                targetSection = touchStartSection - 1;
             }
             
             if (targetSection !== null) {
                 isNavigating = true;
+                currentSection = targetSection;
                 navigateToSection(targetSection);
                 // Re-enable after animation completes
                 setTimeout(() => { isNavigating = false; }, 1200);
