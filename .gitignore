@@ -1,5 +1,32 @@
-_site
-.sass-cache
-Gemfile.lock
-*.gem
-.jekyll-cache
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (if you add build tools later)
+node_modules/
+package-lock.json
+
+# Build artifacts
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.bak
+.cache/
+
+# Thumbnails
+Thumbs.db
