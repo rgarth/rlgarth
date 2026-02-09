@@ -124,6 +124,9 @@ document.querySelectorAll('.nav-link').forEach(link => {
         e.preventDefault();
         const sectionIndex = parseInt(e.target.dataset.section);
         const hash = e.target.getAttribute('href'); // Get the hash from href
+        if (isTouchDevice) {
+            currentSection = sectionIndex;
+        }
         navigateToSection(sectionIndex);
         // Update URL hash so reload works correctly
         if (hash) {
@@ -136,8 +139,12 @@ document.querySelectorAll('.nav-link').forEach(link => {
 function handleHash() {
     const hash = window.location.hash.slice(1); // Remove the # symbol
     if (hash && hashToSection.hasOwnProperty(hash)) {
+        const sectionIndex = hashToSection[hash];
+        if (isTouchDevice) {
+            currentSection = sectionIndex;
+        }
         // Small delay to ensure page is loaded
-        setTimeout(() => navigateToSection(hashToSection[hash]), 100);
+        setTimeout(() => navigateToSection(sectionIndex), 100);
     }
 }
 
@@ -539,7 +546,7 @@ window.addEventListener('scroll', () => {
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeExcerpt(); });
 
 // ============================================
-// TOUCH SWIPE NAVIGATION (Scroll Snapping)
+// TOUCH SWIPE NAVIGATION (Complete Control)
 // ============================================
 
 let isNavigating = false;
@@ -550,40 +557,30 @@ if (isTouchDevice) {
     let touchStartTime = 0;
     let touchStartSection = 0;
     
+    // Completely disable native scrolling on touch devices
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
     document.addEventListener('touchstart', (e) => {
-        if (isNavigating) {
-            e.preventDefault();
-            return;
-        }
+        // Always prevent default to block native scroll
+        if (e.target.closest('.excerpt-modal')) return; // Allow scrolling in modals
+        
         touchStartY = e.touches[0].clientY;
         touchStartTime = Date.now();
-        
-        // Capture which section we're in at START of touch
-        const scrollPercent = getScrollPercent();
-        for (let i = 0; i < CONFIG.sections.length; i++) {
-            const sec = CONFIG.sections[i];
-            const center = (sec.start + sec.end) / 2;
-            if (Math.abs(scrollPercent - center) < (sec.end - sec.start) / 2) {
-                touchStartSection = i;
-                break;
-            }
-        }
+        touchStartSection = currentSection;
     }, { passive: false });
     
     document.addEventListener('touchmove', (e) => {
-        // Prevent ALL scrolling during navigation lock
-        if (isNavigating) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
+        // Block ALL scroll behavior except in modals
+        if (e.target.closest('.excerpt-modal')) return;
+        e.preventDefault();
     }, { passive: false });
     
     document.addEventListener('touchend', (e) => {
-        if (isNavigating) {
-            e.preventDefault();
-            return;
-        }
+        // Allow modal interactions
+        if (e.target.closest('.excerpt-modal')) return;
+        
+        if (isNavigating) return;
         
         const touchEndY = e.changedTouches[0].clientY;
         const touchEndTime = Date.now();
@@ -591,15 +588,13 @@ if (isTouchDevice) {
         const deltaTime = touchEndTime - touchStartTime;
         const velocity = Math.abs(deltaY) / deltaTime;
         
-        // Swipe threshold: 50px or faster velocity
-        const threshold = 50;
-        const isSwipe = Math.abs(deltaY) > threshold || velocity > 0.5;
+        // Swipe threshold: 30px or faster velocity (reduced threshold since no momentum)
+        const threshold = 30;
+        const isSwipe = Math.abs(deltaY) > threshold || velocity > 0.3;
         
         if (isSwipe) {
-            e.preventDefault();
             let targetSection = null;
             
-            // Use the section from touchstart, not current position
             // Swipe down = go to next (positive deltaY)
             // Swipe up = go to previous (negative deltaY)
             if (deltaY > 0 && touchStartSection < CONFIG.sections.length - 1) {
@@ -611,12 +606,26 @@ if (isTouchDevice) {
             if (targetSection !== null) {
                 isNavigating = true;
                 currentSection = targetSection;
+                
+                // Update hash for deep linking
+                const hashNames = ['home', 'penelope', 'boneeaters', 'stories', 'about'];
+                if (hashNames[targetSection]) {
+                    history.pushState(null, null, '#' + hashNames[targetSection]);
+                }
+                
                 navigateToSection(targetSection);
-                // Re-enable after animation completes
-                setTimeout(() => { isNavigating = false; }, 1200);
+                setTimeout(() => { isNavigating = false; }, 1000);
             }
         }
     }, { passive: false });
+    
+    // Initialize on the current hash if present
+    if (window.location.hash) {
+        handleHash();
+    } else {
+        // Start at section 0
+        navigateToSection(0);
+    }
 }
 
 // Initialize
