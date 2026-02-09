@@ -1,9 +1,8 @@
 // R.L. Garth Website - Main JavaScript
-// Version: 082cd8f - 2026-02-09 10:56
+// Build: 2026-02-09 11:07:52
 
 console.log('%crlgarth.com', 'font-weight: bold; font-size: 14px; color: #2a4a3e;');
-console.log('Version: 082cd8f');
-console.log('Built: 2026-02-09 10:56');
+console.log('Build: 2026-02-09 11:07:52');
 
 // ============================================
 // CONSTANTS
