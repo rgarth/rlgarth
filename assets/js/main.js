@@ -1,8 +1,8 @@
 // R.L. Garth Website - Main JavaScript
-// Build: 2026-02-09 11:12:47
+// Build: 2026-02-09 11:25:53
 
 console.log('%crlgarth.com', 'font-weight: bold; font-size: 14px; color: #2a4a3e;');
-console.log('Build: 2026-02-09 11:12:47');
+console.log('Build: 2026-02-09 11:25:53');
 
 // ============================================
 // CONSTANTS
@@ -91,10 +91,10 @@ const navBar = document.getElementById('navBar');
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-// Update "Scroll to enter" text based on device type
-const entryText = document.querySelector('.entry-text');
-const scrollHintText = document.querySelector('.scroll-hint span');
+// Update text for touch devices
 if (isTouchDevice) {
+    const entryText = document.querySelector('.entry-text');
+    const scrollHintText = document.querySelector('.scroll-hint span');
     if (entryText) entryText.textContent = 'Swipe to enter';
     if (scrollHintText) scrollHintText.textContent = 'Swipe';
 }
@@ -122,12 +122,8 @@ document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const sectionIndex = parseInt(e.target.dataset.section);
-        const hash = e.target.getAttribute('href'); // Get the hash from href
-        if (isTouchDevice) {
-            currentSection = sectionIndex;
-        }
+        const hash = e.target.getAttribute('href');
         navigateToSection(sectionIndex);
-        // Update URL hash so reload works correctly
         if (hash) {
             history.pushState(null, null, hash);
         }
@@ -136,14 +132,9 @@ document.querySelectorAll('.nav-link').forEach(link => {
 
 // Handle hash-based navigation
 function handleHash() {
-    const hash = window.location.hash.slice(1); // Remove the # symbol
+    const hash = window.location.hash.slice(1);
     if (hash && hashToSection.hasOwnProperty(hash)) {
-        const sectionIndex = hashToSection[hash];
-        if (isTouchDevice) {
-            currentSection = sectionIndex;
-        }
-        // Small delay to ensure page is loaded
-        setTimeout(() => navigateToSection(sectionIndex), 100);
+        setTimeout(() => navigateToSection(hashToSection[hash]), 100);
     }
 }
 
@@ -511,7 +502,7 @@ let wasInFairyZone = false;
 let wasInWraithZone = false;
 
 window.addEventListener('scroll', () => {
-    if (!ticking && !isNavigating) {
+    if (!ticking) {
         requestAnimationFrame(() => {
             update();
             
@@ -543,85 +534,6 @@ window.addEventListener('scroll', () => {
 
 // Escape key closes excerpt
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeExcerpt(); });
-
-// ============================================
-// TOUCH SWIPE NAVIGATION (Complete Control)
-// ============================================
-
-let isNavigating = false;
-let currentSection = 0; // Track current section globally
-
-if (isTouchDevice) {
-    let touchStartY = 0;
-    let touchStartTime = 0;
-    let touchStartSection = 0;
-    
-    document.addEventListener('touchstart', (e) => {
-        // Allow scrolling in modals
-        if (e.target.closest('.excerpt-modal')) return;
-        
-        touchStartY = e.touches[0].clientY;
-        touchStartTime = Date.now();
-        touchStartSection = currentSection;
-    }, { passive: true });
-    
-    document.addEventListener('touchmove', (e) => {
-        // Block ALL scroll behavior except in modals
-        if (e.target.closest('.excerpt-modal')) return;
-        e.preventDefault();
-    }, { passive: false });
-    
-    document.addEventListener('touchend', (e) => {
-        // Allow modal interactions
-        if (e.target.closest('.excerpt-modal')) return;
-        
-        if (isNavigating) return;
-        
-        const touchEndY = e.changedTouches[0].clientY;
-        const touchEndTime = Date.now();
-        const deltaY = touchStartY - touchEndY;
-        const deltaTime = touchEndTime - touchStartTime;
-        const velocity = Math.abs(deltaY) / deltaTime;
-        
-        // Swipe threshold: 30px or faster velocity (reduced threshold since no momentum)
-        const threshold = 30;
-        const isSwipe = Math.abs(deltaY) > threshold || velocity > 0.3;
-        
-        if (isSwipe) {
-            let targetSection = null;
-            
-            // Swipe down = go to next (positive deltaY)
-            // Swipe up = go to previous (negative deltaY)
-            if (deltaY > 0 && touchStartSection < CONFIG.sections.length - 1) {
-                targetSection = touchStartSection + 1;
-            } else if (deltaY < 0 && touchStartSection > 0) {
-                targetSection = touchStartSection - 1;
-            }
-            
-            if (targetSection !== null) {
-                isNavigating = true;
-                currentSection = targetSection;
-                
-                // Update hash for deep linking
-                const hashNames = ['home', 'penelope', 'boneeaters', 'stories', 'about'];
-                if (hashNames[targetSection]) {
-                    history.pushState(null, null, '#' + hashNames[targetSection]);
-                }
-                
-                navigateToSection(targetSection);
-                setTimeout(() => { isNavigating = false; }, 1000);
-            }
-        }
-    }, { passive: false });
-    
-    // Initialize on the current hash if present
-    if (window.location.hash) {
-        handleHash();
-    } else {
-        // Start at section 0
-        navigateToSection(0);
-    }
-}
 
 // Initialize
 update();
