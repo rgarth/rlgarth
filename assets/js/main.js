@@ -1,8 +1,8 @@
 // R.L. Garth Website - Main JavaScript
-// Build: 2026-02-09 11:07:52
+// Build: 2026-02-09 11:12:47
 
 console.log('%crlgarth.com', 'font-weight: bold; font-size: 14px; color: #2a4a3e;');
-console.log('Build: 2026-02-09 11:07:52');
+console.log('Build: 2026-02-09 11:12:47');
 
 // ============================================
 // CONSTANTS
@@ -556,18 +556,14 @@ if (isTouchDevice) {
     let touchStartTime = 0;
     let touchStartSection = 0;
     
-    // Completely disable native scrolling on touch devices
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    
     document.addEventListener('touchstart', (e) => {
-        // Always prevent default to block native scroll
-        if (e.target.closest('.excerpt-modal')) return; // Allow scrolling in modals
+        // Allow scrolling in modals
+        if (e.target.closest('.excerpt-modal')) return;
         
         touchStartY = e.touches[0].clientY;
         touchStartTime = Date.now();
         touchStartSection = currentSection;
-    }, { passive: false });
+    }, { passive: true });
     
     document.addEventListener('touchmove', (e) => {
         // Block ALL scroll behavior except in modals
