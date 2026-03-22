@@ -471,6 +471,7 @@ function openExcerpt(excerptName) {
             }
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
+            if (excerptName === 'remys-boxes') setupAudioPlayer();
             // Scroll to top after modal opens (needs slight delay for render)
             requestAnimationFrame(() => {
                 content.scrollTop = 0;
@@ -485,13 +486,65 @@ function openExcerpt(excerptName) {
 }
 
 function closeExcerpt() {
+    const audio = document.getElementById('excerptAudio');
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
     document.getElementById('excerptModal').classList.remove('open');
     document.body.style.overflow = '';
+}
+
+function toggleExcerptAudio() {
+    const audio = document.getElementById('excerptAudio');
+    const btn = document.getElementById('audioPlayBtn');
+    if (!audio || !btn) return;
+
+    if (audio.paused) {
+        audio.play();
+        btn.classList.add('playing');
+        btn.querySelector('.audio-btn-label').textContent = 'Pause';
+    } else {
+        audio.pause();
+        btn.classList.remove('playing');
+        btn.querySelector('.audio-btn-label').textContent = 'Listen to the author';
+    }
+}
+
+function formatAudioTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return m + ':' + String(s).padStart(2, '0');
+}
+
+function setupAudioPlayer() {
+    const audio = document.getElementById('excerptAudio');
+    const timeEl = document.getElementById('audioTime');
+    const btn = document.getElementById('audioPlayBtn');
+    if (!audio || !timeEl) return;
+
+    audio.addEventListener('loadedmetadata', () => {
+        timeEl.textContent = '0:00 / ' + formatAudioTime(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+        if (audio.duration) {
+            timeEl.textContent = formatAudioTime(audio.currentTime) + ' / ' + formatAudioTime(audio.duration);
+        }
+    });
+
+    audio.addEventListener('ended', () => {
+        btn.classList.remove('playing');
+        btn.querySelector('.audio-btn-label').textContent = 'Listen to the author';
+        audio.currentTime = 0;
+        timeEl.textContent = '0:00 / ' + formatAudioTime(audio.duration);
+    });
 }
 
 // Expose to window for onclick handlers
 window.openExcerpt = openExcerpt;
 window.closeExcerpt = closeExcerpt;
+window.toggleExcerptAudio = toggleExcerptAudio;
 
 // ============================================
 // CONSOLIDATED SCROLL HANDLER

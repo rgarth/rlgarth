@@ -461,6 +461,65 @@ p {
     color: #8b7355;
 }
 
+/* Audio player (Remy's Boxes) */
+.excerpt-header-with-audio {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.excerpt-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.excerpt-audio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 2px;
+}
+
+.audio-play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #8b7355;
+    color: #f5f0e6;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px 6px 12px;
+    font-family: 'Lora', serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.audio-play-btn:hover {
+    background: #6b5d4d;
+}
+
+.audio-icon-pause {
+    display: none;
+}
+
+.audio-play-btn.playing .audio-icon-play {
+    display: none;
+}
+
+.audio-play-btn.playing .audio-icon-pause {
+    display: block;
+}
+
+.audio-time {
+    font-family: 'Lora', serif;
+    font-size: 0.78rem;
+    color: #8b7355;
+    letter-spacing: 0.03em;
+}
+
 /* Links */
 a {
     color: #2d4a3e;
