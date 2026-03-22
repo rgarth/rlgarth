@@ -471,7 +471,7 @@ function openExcerpt(excerptName) {
             }
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
-            if (excerptName === 'remys-boxes') setupAudioPlayer();
+            if (excerptName === 'remys-boxes' || excerptName === 'lawnmower') setupAudioPlayer();
             // Scroll to top after modal opens (needs slight delay for render)
             requestAnimationFrame(() => {
                 content.scrollTop = 0;

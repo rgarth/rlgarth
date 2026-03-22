@@ -485,8 +485,8 @@ p {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #8b7355;
-    color: #f5f0e6;
+    background: #4a7c47;
+    color: #f0f8e8;
     border: none;
     border-radius: 20px;
     padding: 6px 16px 6px 12px;
@@ -498,6 +498,15 @@ p {
 }
 
 .audio-play-btn:hover {
+    background: #2a4a3e;
+}
+
+.excerpt-header-sepia .audio-play-btn {
+    background: #8b7355;
+    color: #f5f0e6;
+}
+
+.excerpt-header-sepia .audio-play-btn:hover {
     background: #6b5d4d;
 }
 
