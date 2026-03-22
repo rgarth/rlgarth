@@ -461,7 +461,7 @@ p {
     color: #8b7355;
 }
 
-/* Audio player (Remy's Boxes) */
+/* Audio player — shared structure */
 .excerpt-header-with-audio {
     flex-direction: column;
     align-items: stretch;
@@ -485,8 +485,8 @@ p {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #8b7355;
-    color: #f5f0e6;
+    background: var(--audio-btn-bg);
+    color: var(--audio-btn-color);
     border: none;
     border-radius: 20px;
     padding: 6px 16px 6px 12px;
@@ -498,7 +498,7 @@ p {
 }
 
 .audio-play-btn:hover {
-    background: #6b5d4d;
+    background: var(--audio-btn-hover);
 }
 
 .audio-icon-pause {
@@ -516,8 +516,24 @@ p {
 .audio-time {
     font-family: 'Lora', serif;
     font-size: 0.78rem;
-    color: #8b7355;
+    color: var(--audio-time-color);
     letter-spacing: 0.03em;
+}
+
+/* Green theme (Penelope Lemon) */
+.excerpt-header {
+    --audio-btn-bg: #4a7c47;
+    --audio-btn-color: #f0f8e8;
+    --audio-btn-hover: #2a4a3e;
+    --audio-time-color: #4a7c47;
+}
+
+/* Sepia theme (Remy's Boxes) */
+.excerpt-header-sepia {
+    --audio-btn-bg: #8b7355;
+    --audio-btn-color: #f5f0e6;
+    --audio-btn-hover: #6b5d4d;
+    --audio-time-color: #8b7355;
 }
 
 /* Links */
