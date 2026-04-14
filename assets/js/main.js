@@ -1,8 +1,8 @@
 // R.L. Garth Website - Main JavaScript
-// Build: 2026-02-09 12:03:24
+// Build: 2026-04-15 08:15:05
 
 console.log('%crlgarth.com', 'font-weight: bold; font-size: 14px; color: #2a4a3e;');
-console.log('Build: 2026-02-09 12:03:24');
+console.log('Build: 2026-04-15 08:15:05');
 
 // ============================================
 // CONSTANTS
